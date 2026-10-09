@@ -1,0 +1,427 @@
+---
+/**
+ * Portada: calendario de la temporada en una tira horizontal, con la próxima
+ * carrera destacada y una cuenta atrás. Las carreras ya disputadas se ven
+ * atenuadas. Todo se recalcula en el navegador con la hora real del visitante.
+ */
+import { Image } from 'astro:assets';
+import CircleArrow from './CircleArrow.astro';
+import Flag from './Flag.astro';
+import type { Lang } from '../i18n/config';
+import { getPath } from '../i18n/routes';
+import { useTranslations, fill } from '../i18n/ui';
+import { season } from '../data/team';
+import { races, circuitImage, formatWeekend, nextRaceIndex } from '../data/calendar';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const next = nextRaceIndex(); // valor inicial, calculado al generar la web
+const racesHref = getPath(lang, 'races');
+const unitKeys = ['d', 'h', 'm', 's'] as const;
+---
+
+<section class="calendar" aria-labelledby="calendar-title" data-calendar>
+  <div class="container calendar__head">
+    <h2 id="calendar-title" class="calendar__title display">{fill(t.calendar.title, { season: season.number })}</h2>
+
+    <div class="calendar__aside">
+      <div class="countdown" data-countdown hidden={next === -1}>
+        <p class="countdown__label">{t.calendar.nextRace}</p>
+        <div class="countdown__box" role="timer">
+          {
+            unitKeys.map((u, i) => (
+              <>
+                {i > 0 && <span class="countdown__sep" aria-hidden="true">:</span>}
+                <span class="countdown__unit">
+                  <span class="countdown__value" data-unit={u}>--</span>
+                  <span class="countdown__name" aria-hidden="true">{t.calendar.units[u]}</span>
+                  <span class="visually-hidden">{t.calendar.unitsLong[u]}</span>
+                </span>
+              </>
+            ))
+          }
+        </div>
+      </div>
+      <p class="calendar__finished" data-finished hidden={next !== -1}>{t.calendar.finished}</p>
+
+      <a class="discover" href={racesHref}>
+        {t.calendar.viewAll}
+        <CircleArrow />
+      </a>
+    </div>
+  </div>
+
+  <div class="calendar__rail">
+    <button type="button" class="rail-btn rail-btn--prev" data-scroll="-1" aria-label={t.calendar.prev}>
+      <CircleArrow dir="left" />
+    </button>
+
+    <ol class="calendar__track" role="list" data-track>
+      {
+        races.map((race, i) => (
+          <li
+            class:list={['race', { 'is-past': next !== -1 && i < next, 'is-next': i === next }]}
+            data-race-start={race.raceStart}
+          >
+            <a class="race__link" href={racesHref}>
+              <span class="race__date">{formatWeekend(race, lang)}</span>
+              <span class="race__name">
+                <Flag code={race.country} />
+                <span>{race.name[lang]}</span>
+              </span>
+              <span class="race__media">
+                <Image
+                  src={circuitImage(race)}
+                  alt=""
+                  widths={[300, 600]}
+                  sizes="(min-width: 900px) 420px, 280px"
+                  class="race__img"
+                />
+                <span class="race__round">{fill(t.calendar.round, { n: race.round })}</span>
+              </span>
+              <span class="race__cta discover">
+                {t.calendar.discoverRace}
+                <CircleArrow />
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    <button type="button" class="rail-btn rail-btn--next" data-scroll="1" aria-label={t.calendar.next}>
+      <CircleArrow />
+    </button>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-calendar]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-track]')!;
+    const cards = [...root.querySelectorAll<HTMLElement>('[data-race-start]')];
+    const countdown = root.querySelector<HTMLElement>('[data-countdown]')!;
+    const finished = root.querySelector<HTMLElement>('[data-finished]')!;
+    const values = Object.fromEntries(
+      [...root.querySelectorAll<HTMLElement>('[data-unit]')].map((el) => [el.dataset.unit!, el])
+    );
+    const starts = cards.map((c) => new Date(c.dataset.raceStart!).getTime());
+
+    let nextIndex = -1;
+
+    function updateCards() {
+      const now = Date.now();
+      const idx = starts.findIndex((s) => s > now);
+      if (idx === nextIndex) return false;
+      nextIndex = idx;
+      cards.forEach((c, i) => {
+        c.classList.toggle('is-past', idx === -1 || i < idx);
+        c.classList.toggle('is-next', i === idx);
+      });
+      countdown.hidden = idx === -1;
+      finished.hidden = idx !== -1;
+      return true;
+    }
+
+    function centerNext() {
+      const card = cards[nextIndex === -1 ? cards.length - 1 : nextIndex];
+      if (!card) return;
+      track.scrollLeft = card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2;
+    }
+
+    const pad = (n: number) => String(n).padStart(2, '0');
+
+    function tick() {
+      if (updateCards()) centerNext();
+      if (nextIndex === -1) return;
+      let diff = Math.max(0, Math.floor((starts[nextIndex] - Date.now()) / 1000));
+      const d = Math.floor(diff / 86400);
+      diff -= d * 86400;
+      const h = Math.floor(diff / 3600);
+      diff -= h * 3600;
+      const m = Math.floor(diff / 60);
+      const s = diff - m * 60;
+      values.d.textContent = pad(d);
+      values.h.textContent = pad(h);
+      values.m.textContent = pad(m);
+      values.s.textContent = pad(s);
+    }
+
+    tick();
+    centerNext();
+    window.setInterval(tick, 1000);
+
+    root.querySelectorAll<HTMLButtonElement>('[data-scroll]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const dir = Number(btn.dataset.scroll);
+        track.scrollBy({ left: dir * track.clientWidth * 0.75, behavior: 'smooth' });
+      })
+    );
+  });
+</script>
+
+<style>
+  .calendar {
+    padding-block: clamp(3.5rem, 7vw, 5.5rem) clamp(3rem, 6vw, 4.5rem);
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  /* ---------- Cabecera: título, cuenta atrás y «Ver todo» ---------- */
+  .calendar__head {
+    display: grid;
+    gap: 1.75rem;
+    align-items: end;
+  }
+
+  .calendar__title {
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+    text-wrap: balance;
+  }
+
+  .calendar__aside {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1.25rem 2rem;
+  }
+
+  .countdown__label {
+    margin-bottom: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .countdown__box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.35rem;
+    padding: 0.45rem 1.4rem 0.35rem;
+    background: #fff;
+    color: var(--c-ink);
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  }
+
+  .countdown__unit {
+    display: grid;
+    justify-items: center;
+    min-width: 2.4ch;
+  }
+
+  .countdown__value,
+  .countdown__sep {
+    font-family: var(--f-display);
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.625rem);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .countdown__name {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--c-text-muted);
+  }
+
+  .calendar__finished {
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 900px) {
+    .calendar__head {
+      grid-template-columns: 1fr auto;
+    }
+  }
+
+  /* ---------- Tira de carreras ---------- */
+  .calendar__rail {
+    position: relative;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .calendar__track {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0.5rem max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter))) 1rem;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .calendar__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .race {
+    flex: 0 0 auto;
+    width: 260px;
+    scroll-snap-align: center;
+    transition: width 0.3s var(--ease);
+  }
+
+  .race.is-next {
+    width: min(420px, 82vw);
+  }
+
+  .race__link {
+    display: grid;
+    gap: 0.35rem;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .race__date {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .race__name {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.6em;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .race__name :global(svg.flag) {
+    flex-shrink: 0;
+  }
+
+  .race__media {
+    position: relative;
+    display: block;
+    margin-top: 0.4rem;
+    overflow: hidden;
+    background: var(--c-ink-soft);
+  }
+
+  .race__link :global(.race__img) {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease), filter 0.3s var(--ease);
+  }
+
+  /* Carreras futuras: teñidas de granate, como un avance */
+  .race__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--c-primary);
+    mix-blend-mode: multiply;
+    opacity: 0.85;
+    transition: opacity 0.3s var(--ease);
+  }
+
+  .race.is-next .race__media::after {
+    opacity: 0;
+  }
+
+  .race.is-past .race__media::after {
+    opacity: 0;
+  }
+
+  .race.is-past .race__link :global(.race__img) {
+    filter: grayscale(1) brightness(0.55);
+  }
+
+  .race.is-past .race__date,
+  .race.is-past .race__name {
+    opacity: 0.55;
+  }
+
+  .race__link:hover :global(.race__img) {
+    transform: scale(1.04);
+  }
+
+  .race__link:hover .race__media::after {
+    opacity: 0.35;
+  }
+
+  .race.is-next .race__name {
+    font-size: 1.25rem;
+  }
+
+  .race__round {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    bottom: 0;
+    padding: 0.3rem 0.65rem;
+    background: rgba(0, 0, 0, 0.72);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .race.is-next .race__round {
+    background: var(--c-primary);
+  }
+
+  .race__cta {
+    display: none;
+    justify-self: center;
+    margin-top: 0.5rem;
+  }
+
+  .race.is-next .race__cta {
+    display: inline-flex;
+  }
+
+  .race__link:focus-visible {
+    outline-color: #fff;
+  }
+
+  /* Botones de desplazamiento (solo con ratón) */
+  .rail-btn {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    display: none;
+    padding: 0.5rem;
+    border: 0;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+    transform: translateY(-50%);
+  }
+
+  .rail-btn :global(.circle-arrow) {
+    width: 2.75rem;
+    height: 2.75rem;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .rail-btn--prev {
+    left: 0.75rem;
+  }
+
+  .rail-btn--next {
+    right: 0.75rem;
+  }
+
+  @media (hover: hover) and (min-width: 900px) {
+    .rail-btn {
+      display: block;
+    }
+  }
+</style>

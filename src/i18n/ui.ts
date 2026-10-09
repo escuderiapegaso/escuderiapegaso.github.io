@@ -17,7 +17,28 @@ interface UIStrings {
     driver: string;
     sideView: string;
   };
-  home: { kicker: string; lead: string; cta: string; factsTitle: string };
+  home: {
+    discover: string;
+    newsLabel: string;
+    slide: string;
+    goTo: string;
+    pause: string;
+    play: string;
+    driversTitle: string;
+  };
+  calendar: {
+    title: string;
+    nextRace: string;
+    units: { d: string; h: string; m: string; s: string };
+    unitsLong: { d: string; h: string; m: string; s: string };
+    viewAll: string;
+    discoverRace: string;
+    round: string;
+    prev: string;
+    next: string;
+    finished: string;
+  };
+  article: { back: string; published: string };
   footer: { partners: string; teamSponsor: string; powerUnit: string; explore: string; disclaimer: string };
   comingSoon: { title: string; text: string; back: string };
   notFound: { title: string; text: string };
@@ -62,11 +83,27 @@ export const ui: Record<Lang, UIStrings> = {
       sideView: 'vista lateral',
     },
     home: {
-      kicker: 'Temporada {season}',
-      lead: 'El nuevo monoplaza de la Escudería Pegaso ya rueda en pista.',
-      cta: 'Descubre el coche',
-      factsTitle: 'Temporada {season} de un vistazo',
+      discover: 'Descubrir',
+      newsLabel: 'Últimas noticias',
+      slide: 'Noticia {n} de {total}',
+      goTo: 'Ver noticia {n}',
+      pause: 'Pausar el pase de noticias',
+      play: 'Reanudar el pase de noticias',
+      driversTitle: 'Nuestros pilotos',
     },
+    calendar: {
+      title: 'Calendario temporada {season}',
+      nextRace: 'La próxima carrera empieza en',
+      units: { d: 'DD', h: 'HH', m: 'MM', s: 'SS' },
+      unitsLong: { d: 'días', h: 'horas', m: 'minutos', s: 'segundos' },
+      viewAll: 'Ver todo',
+      discoverRace: 'Descubre la carrera',
+      round: 'Ronda {n}',
+      prev: 'Carreras anteriores',
+      next: 'Carreras siguientes',
+      finished: 'Temporada finalizada',
+    },
+    article: { back: 'Todas las noticias', published: 'Publicado el' },
     footer: {
       partners: 'Socios oficiales',
       teamSponsor: 'Patrocinador principal',
@@ -121,11 +158,27 @@ export const ui: Record<Lang, UIStrings> = {
       sideView: 'side view',
     },
     home: {
-      kicker: 'Season {season}',
-      lead: "Escudería Pegaso's new challenger is out on track.",
-      cta: 'Discover the car',
-      factsTitle: 'Season {season} at a glance',
+      discover: 'Discover',
+      newsLabel: 'Latest news',
+      slide: 'Story {n} of {total}',
+      goTo: 'Show story {n}',
+      pause: 'Pause news slideshow',
+      play: 'Resume news slideshow',
+      driversTitle: 'Our drivers',
     },
+    calendar: {
+      title: 'Season {season} race calendar',
+      nextRace: 'Next race starts in',
+      units: { d: 'DD', h: 'HH', m: 'MM', s: 'SS' },
+      unitsLong: { d: 'days', h: 'hours', m: 'minutes', s: 'seconds' },
+      viewAll: 'View all',
+      discoverRace: 'Discover the race',
+      round: 'Round {n}',
+      prev: 'Previous races',
+      next: 'Next races',
+      finished: 'Season finished',
+    },
+    article: { back: 'All news', published: 'Published on' },
     footer: {
       partners: 'Official partners',
       teamSponsor: 'Team sponsor',
@@ -180,11 +233,27 @@ export const ui: Record<Lang, UIStrings> = {
       sideView: 'vista lateral',
     },
     home: {
-      kicker: 'Temporada {season}',
-      lead: "El nou monoplaça de l'Escudería Pegaso ja roda a la pista.",
-      cta: 'Descobreix el cotxe',
-      factsTitle: "La temporada {season} d'un cop d'ull",
+      discover: 'Descobreix',
+      newsLabel: 'Últimes notícies',
+      slide: 'Notícia {n} de {total}',
+      goTo: 'Mostra la notícia {n}',
+      pause: 'Atura el passi de notícies',
+      play: 'Reprèn el passi de notícies',
+      driversTitle: 'Els nostres pilots',
     },
+    calendar: {
+      title: 'Calendari temporada {season}',
+      nextRace: 'La propera cursa comença en',
+      units: { d: 'DD', h: 'HH', m: 'MM', s: 'SS' },
+      unitsLong: { d: 'dies', h: 'hores', m: 'minuts', s: 'segons' },
+      viewAll: 'Veure-ho tot',
+      discoverRace: 'Descobreix la cursa',
+      round: 'Ronda {n}',
+      prev: 'Curses anteriors',
+      next: 'Curses següents',
+      finished: 'Temporada acabada',
+    },
+    article: { back: 'Totes les notícies', published: 'Publicat el' },
     footer: {
       partners: 'Socis oficials',
       teamSponsor: 'Patrocinador principal',

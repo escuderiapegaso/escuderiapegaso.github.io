@@ -236,3 +236,41 @@ p {
 .brand-stripe span:nth-child(3) { background: var(--c-chev-orange); }
 .brand-stripe span:nth-child(4) { background: var(--c-chev-red); }
 .brand-stripe span:nth-child(5) { background: var(--c-primary); }
+
+/* Enlace «Descubrir» con flecha en círculo (portada, pilotos, calendario) */
+.discover {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+}
+
+.circle-arrow {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.circle-arrow svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+a:hover .circle-arrow,
+a:focus-visible .circle-arrow,
+button:hover .circle-arrow {
+  background: #fff;
+  border-color: #fff;
+  color: var(--c-ink);
+}

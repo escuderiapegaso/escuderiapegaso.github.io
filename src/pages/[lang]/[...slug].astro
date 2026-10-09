@@ -1,32 +1,51 @@
 ---
 /**
- * Genera todas las páginas en los tres idiomas a partir del mapa de rutas
- * (`src/i18n/routes.ts`). Cada clave se pinta con su vista; las secciones
- * que aún no tienen vista propia muestran la página «en construcción».
+ * Genera todas las páginas en los tres idiomas:
+ *  - las secciones del mapa de rutas (`src/i18n/routes.ts`), cada una con su
+ *    vista; las que aún no tienen vista propia muestran «en construcción»;
+ *  - una página por noticia (`src/content/news/<idioma>/<noticia>.md`).
  */
 import type { GetStaticPaths } from 'astro';
+import { getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import HomeView from '../../views/HomeView.astro';
+import ArticleView from '../../views/ArticleView.astro';
 import ComingSoonView from '../../views/ComingSoonView.astro';
 import { langs, type Lang } from '../../i18n/config';
 import { routes, type RouteKey } from '../../i18n/routes';
 import { useTranslations } from '../../i18n/ui';
 import { drivers, teamPrincipal } from '../../data/team';
+import { getNews, newsAlternates, splitId, type NewsEntry } from '../../data/news';
 
-export const getStaticPaths = (() =>
-  langs.flatMap((lang) =>
+export const getStaticPaths = (async () => {
+  const sections = langs.flatMap((lang) =>
     (Object.keys(routes) as RouteKey[]).map((key) => ({
       params: { lang, slug: routes[key][lang] || undefined },
-      props: { lang, routeKey: key },
+      props: { lang, routeKey: key, entry: undefined as NewsEntry | undefined },
     }))
-  )) satisfies GetStaticPaths;
+  );
+
+  const articles = (
+    await Promise.all(
+      langs.map(async (lang) =>
+        (await getNews(lang)).map((entry) => ({
+          params: { lang, slug: `${routes.news[lang]}/${splitId(entry).slug}` },
+          props: { lang, routeKey: 'news' as RouteKey, entry },
+        }))
+      )
+    )
+  ).flat();
+
+  return [...sections, ...articles];
+}) satisfies GetStaticPaths;
 
 interface Props {
   lang: Lang;
   routeKey: RouteKey;
+  entry?: NewsEntry;
 }
 
-const { lang, routeKey } = Astro.props;
+const { lang, routeKey, entry } = Astro.props;
 const t = useTranslations(lang);
 
 // Título y rótulo de cada página
@@ -35,8 +54,16 @@ const person = people.find((p) => p.page === routeKey);
 
 let title: string | undefined;
 let kicker: string | undefined;
+let description: string | undefined;
+let alternates: Record<Lang, string> | undefined;
+let ogImage: string | undefined;
 
-if (person) {
+if (entry) {
+  title = entry.data.title;
+  description = entry.data.excerpt;
+  alternates = await newsAlternates(splitId(entry).slug);
+  ogImage = (await getImage({ src: entry.data.image, width: 1200, format: 'jpg' })).src;
+} else if (person) {
   title = person.role === 'teamPrincipal' ? 'nicorz' : person.name;
   kicker = person.role === 'teamPrincipal' ? t.common.teamPrincipal : `${t.common.driver} #${person.number}`;
 } else if (routeKey !== 'home') {
@@ -44,6 +71,14 @@ if (person) {
 }
 ---
 
-<BaseLayout lang={lang} routeKey={routeKey} title={title}>
-  {routeKey === 'home' ? <HomeView lang={lang} /> : <ComingSoonView lang={lang} title={title!} kicker={kicker} />}
+<BaseLayout lang={lang} routeKey={routeKey} title={title} description={description} alternates={alternates} ogImage={ogImage}>
+  {
+    entry ? (
+      <ArticleView lang={lang} entry={entry} />
+    ) : routeKey === 'home' ? (
+      <HomeView lang={lang} />
+    ) : (
+      <ComingSoonView lang={lang} title={title!} kicker={kicker} />
+    )
+  }
 </BaseLayout>

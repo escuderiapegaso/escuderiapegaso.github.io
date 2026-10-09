@@ -1,0 +1,375 @@
+---
+/**
+ * Portada: pase de las últimas noticias a pantalla completa.
+ * Avanza solo cada pocos segundos (se puede pausar) y se para al pasar el
+ * ratón o el foco por encima. Si el visitante prefiere menos movimiento,
+ * no avanza solo.
+ */
+import { Picture } from 'astro:assets';
+import CircleArrow from './CircleArrow.astro';
+import type { Lang } from '../i18n/config';
+import { useTranslations, fill } from '../i18n/ui';
+import { newsPath, splitId, type NewsEntry } from '../data/news';
+
+interface Props {
+  lang: Lang;
+  items: NewsEntry[];
+}
+
+const { lang, items } = Astro.props;
+const t = useTranslations(lang);
+const total = items.length;
+---
+
+{
+  total > 0 && (
+    <section class="news-hero" aria-roledescription="carousel" aria-label={t.home.newsLabel} data-carousel>
+      <div class="news-hero__slides">
+        {items.map((item, i) => {
+          const href = newsPath(lang, splitId(item).slug);
+          return (
+            <article
+              class:list={['slide', { 'is-active': i === 0 }]}
+              aria-roledescription="slide"
+              aria-label={fill(t.home.slide, { n: i + 1, total })}
+              data-slide
+              {...(i === 0 ? {} : { inert: true, 'aria-hidden': 'true' })}
+            >
+              <Picture
+                src={item.data.image}
+                alt={item.data.imageAlt}
+                formats={['avif', 'webp']}
+                widths={[768, 1280, 1920, 2560]}
+                sizes="100vw"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : 'auto'}
+                class="slide__img"
+                style={`object-position: ${item.data.imagePosition}`}
+              />
+              <div class="slide__content">
+                {item.data.tag && <p class="slide__tag">{item.data.tag}</p>}
+                <h2 class="slide__title display">
+                  <a href={href}>{item.data.title}</a>
+                </h2>
+                <a class="discover" href={href} tabindex="-1" aria-hidden="true">
+                  {t.home.discover}
+                  <CircleArrow />
+                </a>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      {total > 1 && (
+        <div class="news-hero__controls">
+          <ul class="dots" role="list">
+            {items.map((_, i) => (
+              <li>
+                <button
+                  type="button"
+                  class="dot"
+                  aria-label={fill(t.home.goTo, { n: i + 1 })}
+                  aria-current={i === 0 ? 'true' : undefined}
+                  data-dot={i}
+                >
+                  <span aria-hidden="true" />
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            class="pause"
+            data-pause
+            data-label-pause={t.home.pause}
+            data-label-play={t.home.play}
+            aria-label={t.home.pause}
+          >
+            <svg class="pause__icon pause__icon--pause" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M3.5 2v8M8.5 2v8" stroke="currentColor" stroke-width="2" />
+            </svg>
+            <svg class="pause__icon pause__icon--play" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M3 1.8v8.4L10 6z" fill="currentColor" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </section>
+  )
+}
+
+<script>
+  const INTERVAL = 7000;
+
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-dot]')];
+    const pauseBtn = root.querySelector<HTMLButtonElement>('[data-pause]');
+    if (slides.length < 2) return;
+
+    let current = 0;
+    let timer: number | undefined;
+    let userPaused = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let hovering = false;
+
+    function show(index: number) {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((s, i) => {
+        const active = i === current;
+        s.classList.toggle('is-active', active);
+        s.toggleAttribute('inert', !active);
+        if (active) s.removeAttribute('aria-hidden');
+        else s.setAttribute('aria-hidden', 'true');
+      });
+      dots.forEach((d, i) => {
+        if (i === current) d.setAttribute('aria-current', 'true');
+        else d.removeAttribute('aria-current');
+      });
+      // Reinicia la animación de la barra de progreso del punto activo
+      root.style.setProperty('--progress-run', 'none');
+      void root.offsetWidth;
+      root.style.removeProperty('--progress-run');
+    }
+
+    function schedule() {
+      window.clearInterval(timer);
+      const running = !userPaused && !hovering;
+      root.classList.toggle('is-paused', !running);
+      if (running) timer = window.setInterval(() => show(current + 1), INTERVAL);
+    }
+
+    function setUserPaused(paused: boolean) {
+      userPaused = paused;
+      if (pauseBtn) {
+        pauseBtn.setAttribute('aria-label', paused ? pauseBtn.dataset.labelPlay! : pauseBtn.dataset.labelPause!);
+        pauseBtn.classList.toggle('is-play', paused);
+      }
+      schedule();
+    }
+
+    dots.forEach((d, i) =>
+      d.addEventListener('click', () => {
+        show(i);
+        schedule();
+      })
+    );
+    pauseBtn?.addEventListener('click', () => setUserPaused(!userPaused));
+
+    root.addEventListener('mouseenter', () => ((hovering = true), schedule()));
+    root.addEventListener('mouseleave', () => ((hovering = false), schedule()));
+    root.addEventListener('focusin', () => ((hovering = true), schedule()));
+    root.addEventListener('focusout', (e) => {
+      if (!root.contains(e.relatedTarget as Node)) {
+        hovering = false;
+        schedule();
+      }
+    });
+
+    // Deslizar con el dedo en móvil
+    let startX: number | null = null;
+    root.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse') startX = e.clientX;
+    });
+    root.addEventListener('pointerup', (e) => {
+      if (startX === null) return;
+      const dx = e.clientX - startX;
+      startX = null;
+      if (Math.abs(dx) > 50) {
+        show(current + (dx < 0 ? 1 : -1));
+        schedule();
+      }
+    });
+
+    setUserPaused(userPaused);
+  });
+</script>
+
+<style>
+  .news-hero {
+    position: relative;
+    height: calc(100svh - var(--utility-h) - var(--header-h) - 4px);
+    min-height: 480px;
+    max-height: 1100px;
+    overflow: hidden;
+    background: var(--c-ink);
+    color: #fff;
+    touch-action: pan-y;
+  }
+
+  .news-hero__slides {
+    position: relative;
+    height: 100%;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s var(--ease), visibility 0s linear 0.8s;
+  }
+
+  .slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.8s var(--ease);
+  }
+
+  .slide :global(picture) {
+    display: block;
+    height: 100%;
+  }
+
+  .slide :global(.slide__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Oscurece la parte baja para que el texto se lea sobre cualquier foto */
+  .slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.45) 32%, rgba(0, 0, 0, 0) 62%);
+    pointer-events: none;
+  }
+
+  .slide__content {
+    position: absolute;
+    z-index: 1;
+    inset: auto 0 0 0;
+    display: grid;
+    justify-items: center;
+    gap: 0.9rem;
+    padding: 0 var(--gutter) 5.5rem;
+    text-align: center;
+  }
+
+  .slide__tag {
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .slide__title {
+    max-width: min(30ch, 100%);
+    overflow-wrap: break-word;
+    font-size: clamp(1.25rem, 0.85rem + 1.6vw, 2.25rem);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  .slide__title a {
+    text-decoration: none;
+  }
+
+  .slide__title a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+  }
+
+  /* ---------- Controles ---------- */
+  .news-hero__controls {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transform: translateX(-50%);
+  }
+
+  .dots {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .dot,
+  .pause {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .dot span {
+    position: relative;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    transition: all 0.25s var(--ease);
+  }
+
+  .dot:hover span {
+    background: #fff;
+  }
+
+  /* Punto activo: anillo con el progreso hasta la siguiente noticia */
+  .dot[aria-current] span {
+    width: 18px;
+    height: 18px;
+    background: none;
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
+  }
+
+  .dot[aria-current] span::after {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    border-radius: 50%;
+    border: 1.5px solid var(--c-primary-light);
+    clip-path: inset(0 100% 0 0);
+    animation: var(--progress-run, progress 7s linear forwards);
+  }
+
+  .is-paused .dot[aria-current] span::after {
+    animation-play-state: paused;
+  }
+
+  @keyframes progress {
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  .pause {
+    opacity: 0.75;
+  }
+
+  .pause:hover {
+    opacity: 1;
+  }
+
+  .pause__icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .pause__icon--play,
+  .pause.is-play .pause__icon--pause {
+    display: none;
+  }
+
+  .pause.is-play .pause__icon--play {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dot[aria-current] span::after {
+      display: none;
+    }
+  }
+</style>

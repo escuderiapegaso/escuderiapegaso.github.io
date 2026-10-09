@@ -18,15 +18,24 @@ interface Props {
   /** Título de la página (sin el nombre del equipo). */
   title?: string;
   description?: string;
+  /**
+   * Direcciones de esta misma página en cada idioma. Por defecto salen del
+   * mapa de rutas; las noticias pasan las suyas.
+   */
+  alternates?: Record<Lang, string>;
+  /** Imagen para compartir en redes (ruta ya optimizada). */
+  ogImage?: string;
 }
 
-const { lang, routeKey, title, description } = Astro.props;
+const { lang, routeKey, title, description, ogImage: ogImagePath } = Astro.props;
 const t = useTranslations(lang);
+const alternates =
+  Astro.props.alternates ?? (Object.fromEntries(langs.map((l) => [l, getPath(l, routeKey)])) as Record<Lang, string>);
 
 const fullTitle = title ? `${title} | ${t.site.name}` : `${t.site.name} · Formula 1`;
 const metaDescription = description ?? t.site.description;
-const canonical = new URL(getPath(lang, routeKey), Astro.site);
-const ogImage = new URL(withBase('/icon-512.png'), Astro.site);
+const canonical = new URL(alternates[lang], Astro.site);
+const ogImage = new URL(ogImagePath ?? withBase('/icon-512.png'), Astro.site);
 ---
 
 <!doctype html>
@@ -40,10 +49,10 @@ const ogImage = new URL(withBase('/icon-512.png'), Astro.site);
     <link rel="canonical" href={canonical} />
     {
       langs.map((l) => (
-        <link rel="alternate" hreflang={languages[l].htmlLang} href={new URL(getPath(l, routeKey), Astro.site)} />
+        <link rel="alternate" hreflang={languages[l].htmlLang} href={new URL(alternates[l], Astro.site)} />
       ))
     }
-    <link rel="alternate" hreflang="x-default" href={new URL(getPath(defaultLang, routeKey), Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(alternates[defaultLang], Astro.site)} />
 
     <link rel="icon" type="image/png" sizes="32x32" href={withBase('/favicon-32.png')} />
     <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
@@ -58,11 +67,11 @@ const ogImage = new URL(withBase('/icon-512.png'), Astro.site);
   </head>
   <body>
     <a class="skip-link" href="#content">{t.nav.skip}</a>
-    <Header lang={lang} routeKey={routeKey} />
+    <Header lang={lang} routeKey={routeKey} alternates={alternates} />
     <main id="content" tabindex="-1">
       <slot />
     </main>
-    <Footer lang={lang} routeKey={routeKey} />
+    <Footer lang={lang} alternates={alternates} />
   </body>
 </html>
 

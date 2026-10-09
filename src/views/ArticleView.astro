@@ -1,0 +1,184 @@
+---
+/** Página de una noticia: imagen, rótulo, título, entradilla y texto. */
+import { Picture } from 'astro:assets';
+import { render } from 'astro:content';
+import CircleArrow from '../components/CircleArrow.astro';
+import type { Lang } from '../i18n/config';
+import { getPath } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+import { formatDate, type NewsEntry } from '../data/news';
+
+interface Props {
+  lang: Lang;
+  entry: NewsEntry;
+}
+
+const { lang, entry } = Astro.props;
+const t = useTranslations(lang);
+const { Content } = await render(entry);
+const { title, date, tag, excerpt, image, imageAlt, imagePosition } = entry.data;
+---
+
+<article class="article">
+  <header class="article__hero">
+    <Picture
+      src={image}
+      alt={imageAlt}
+      formats={['avif', 'webp']}
+      widths={[768, 1280, 1920, 2560]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="article__img"
+      style={`object-position: ${imagePosition}`}
+    />
+    <div class="container article__heading">
+      {tag && <p class="kicker article__tag">{tag}</p>}
+      <h1 class="article__title display">{title}</h1>
+      <p class="article__date">
+        {t.article.published} <time datetime={date.toISOString().slice(0, 10)}>{formatDate(date, lang)}</time>
+      </p>
+    </div>
+  </header>
+
+  <div class="container article__body">
+    <p class="article__lead">{excerpt}</p>
+    <div class="prose">
+      <Content />
+    </div>
+
+    <a class="article__back" href={getPath(lang, 'news')}>
+      <CircleArrow dir="left" />
+      {t.article.back}
+    </a>
+  </div>
+</article>
+
+<style>
+  .article__hero {
+    position: relative;
+    display: grid;
+    min-height: clamp(420px, 62vh, 760px);
+    background: var(--c-ink);
+    color: #fff;
+  }
+
+  .article__hero > :global(picture) {
+    display: block;
+    grid-area: 1 / 1;
+    min-height: 0;
+  }
+
+  .article__hero :global(.article__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .article__hero::after {
+    content: '';
+    grid-area: 1 / 1;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0) 70%);
+  }
+
+  .article__heading {
+    position: relative;
+    z-index: 1;
+    grid-area: 1 / 1;
+    align-self: end;
+    display: grid;
+    gap: 0.9rem;
+    padding-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .article__tag {
+    color: #fff;
+  }
+
+  .article__tag::before {
+    background: var(--c-primary-light);
+  }
+
+  .article__title {
+    max-width: min(24ch, 100%);
+    overflow-wrap: break-word;
+    font-size: clamp(1.625rem, 1rem + 2.8vw, 3.25rem);
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+
+  .article__date {
+    font-size: 0.9375rem;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .article__body {
+    max-width: calc(46rem + 2 * var(--gutter));
+    padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3.5rem, 8vw, 6rem);
+  }
+
+  .article__lead {
+    margin-bottom: 2rem;
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--c-primary);
+    font-size: clamp(1.1875rem, 1.05rem + 0.5vw, 1.375rem);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .prose :global(p) {
+    margin-bottom: 1.25em;
+  }
+
+  .prose :global(h2) {
+    margin: 2em 0 0.75em;
+    font-size: 1.5rem;
+  }
+
+  .prose :global(h3) {
+    margin: 1.75em 0 0.6em;
+    font-size: 1.25rem;
+  }
+
+  .prose :global(a) {
+    color: var(--c-primary);
+    text-underline-offset: 0.15em;
+  }
+
+  .prose :global(img) {
+    margin-block: 2rem;
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 1.25em;
+    padding-left: 1.25em;
+  }
+
+  .prose :global(blockquote) {
+    margin: 2rem 0;
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--c-silver);
+    font-size: 1.1875rem;
+    font-style: italic;
+    color: var(--c-text-muted);
+  }
+
+  .article__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .article__back:hover :global(.circle-arrow) {
+    background: var(--c-primary);
+    border-color: var(--c-primary);
+    color: #fff;
+  }
+</style>

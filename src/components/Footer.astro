@@ -9,10 +9,11 @@ import { season } from '../data/team';
 
 interface Props {
   lang: Lang;
-  routeKey: RouteKey;
+  /** Dirección de la página actual en cada idioma (selector de idioma). */
+  alternates: Record<Lang, string>;
 }
 
-const { lang, routeKey } = Astro.props;
+const { lang, alternates } = Astro.props;
 const t = useTranslations(lang);
 
 const exploreA: RouteKey[] = ['car', 'team', 'news', 'races', 'history'];
@@ -91,7 +92,7 @@ const year = new Date().getFullYear();
             langs.map((l) => (
               <li>
                 <a
-                  href={getPath(l, routeKey)}
+                  href={alternates[l]}
                   hreflang={languages[l].htmlLang}
                   lang={languages[l].htmlLang}
                   aria-current={l === lang ? 'true' : undefined}

@@ -9,9 +9,11 @@ import { teamMenu } from '../data/team';
 interface Props {
   lang: Lang;
   routeKey: RouteKey;
+  /** Dirección de la página actual en cada idioma (selector de idioma). */
+  alternates: Record<Lang, string>;
 }
 
-const { lang, routeKey } = Astro.props;
+const { lang, routeKey, alternates } = Astro.props;
 const t = useTranslations(lang);
 
 const mainNav: RouteKey[] = ['car', 'team', 'news', 'races', 'history', 'ddp', 'open-series', 'sponsors'];
@@ -41,7 +43,7 @@ const isActive = (key: RouteKey) => routeKey === key || (key === 'team' && route
             langs.map((l) => (
               <li>
                 <a
-                  href={getPath(l, routeKey)}
+                  href={alternates[l]}
                   hreflang={languages[l].htmlLang}
                   lang={languages[l].htmlLang}
                   aria-current={l === lang ? 'true' : undefined}

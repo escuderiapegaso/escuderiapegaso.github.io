@@ -1,6 +1,7 @@
 /**
  * Datos de la temporada en curso. Actualiza este archivo al empezar cada temporada.
  */
+import type { ImageMetadata } from 'astro';
 import type { RouteKey } from '../i18n/routes';
 
 export const season = {
@@ -21,6 +22,12 @@ export interface Person {
   number?: number;
   role: 'driver' | 'teamPrincipal';
   page: RouteKey;
+  /**
+   * Retrato (PNG con fondo transparente, de cintura para arriba).
+   * Impórtalo arriba, p. ej. `import cannon from '../assets/drivers/john-cannon.png'`,
+   * y ponlo aquí: `portrait: cannon`. Sin retrato se muestra el dorsal.
+   */
+  portrait?: ImageMetadata;
 }
 
 export const drivers: Person[] = [

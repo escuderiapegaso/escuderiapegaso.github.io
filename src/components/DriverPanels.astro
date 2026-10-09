@@ -1,0 +1,162 @@
+---
+/** Portada: los dos pilotos titulares, cada uno en un panel que lleva a su ficha. */
+import { Image } from 'astro:assets';
+import CircleArrow from './CircleArrow.astro';
+import Flag from './Flag.astro';
+import type { Lang } from '../i18n/config';
+import { getPath } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+import { drivers } from '../data/team';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="drivers" aria-labelledby="drivers-title">
+  <h2 id="drivers-title" class="visually-hidden">{t.home.driversTitle}</h2>
+  <ul class="drivers__list" role="list">
+    {
+      drivers.map((d) => (
+        <li class="driver">
+          <a class="driver__link" href={getPath(lang, d.page)}>
+            {d.portrait ? (
+              <Image src={d.portrait} alt="" widths={[480, 800, 1200]} sizes="(min-width: 720px) 50vw, 100vw" class="driver__portrait" />
+            ) : (
+              <span class="driver__number display" aria-hidden="true">
+                {d.number}
+              </span>
+            )}
+            <span class="driver__info">
+              <span class="driver__meta">
+                {d.country && <Flag code={d.country} />}
+                <span>
+                  #{d.number}
+                  {d.country && <> · {t.countries[d.country]}</>}
+                </span>
+              </span>
+              <span class="driver__name display">{d.name}</span>
+              <span class="discover">
+                {t.home.discover}
+                <CircleArrow />
+              </span>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .drivers {
+    background: var(--c-ink);
+  }
+
+  .drivers__list {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .driver__link {
+    position: relative;
+    display: grid;
+    place-items: end center;
+    min-height: clamp(380px, 52vw, 640px);
+    overflow: hidden;
+    color: #fff;
+    text-decoration: none;
+    background:
+      radial-gradient(90% 75% at 50% 30%, #5c0a26 0%, #33040f 55%, #170207 100%);
+    isolation: isolate;
+  }
+
+  /* Oscurecido inferior para el texto */
+  .driver__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 45%);
+    pointer-events: none;
+  }
+
+  .driver__link :global(.driver__portrait) {
+    position: absolute;
+    inset: auto 0 0 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: 50% 100%;
+    transition: transform 0.6s var(--ease);
+  }
+
+  /* Sin retrato: dorsal gigante en silueta */
+  .driver__number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: clamp(9rem, 26vw, 22rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.22);
+    transform: translate(-50%, -58%);
+    transition: transform 0.6s var(--ease), -webkit-text-stroke-color 0.3s var(--ease);
+  }
+
+  .driver__link:hover .driver__number {
+    -webkit-text-stroke-color: rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -58%) scale(1.03);
+  }
+
+  .driver__link:hover :global(.driver__portrait) {
+    transform: scale(1.03);
+  }
+
+  .driver__info {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    gap: 0.6rem;
+    padding: 0 var(--gutter) 2.25rem;
+    text-align: center;
+  }
+
+  .driver__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .driver__name {
+    font-size: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    line-height: 1.1;
+  }
+
+  .driver__link:focus-visible {
+    outline-offset: -4px;
+    outline-color: #fff;
+  }
+
+  @media (min-width: 720px) {
+    .drivers__list {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .driver__number {
+      font-size: clamp(9rem, 17vw, 20rem);
+    }
+  }
+</style>
