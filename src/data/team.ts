@@ -3,6 +3,7 @@
  */
 import type { ImageMetadata } from 'astro';
 import type { RouteKey } from '../i18n/routes';
+import raveelPortrait from '../assets/drivers/remco-raveel.png';
 
 export const season = {
   number: 68,
@@ -32,7 +33,15 @@ export interface Person {
 
 export const drivers: Person[] = [
   { id: 'john-cannon', name: 'John Cannon', country: 'CA', number: 10, role: 'driver', page: 'team/john-cannon' },
-  { id: 'remco-raveel', name: 'Remco Raveel', country: 'BE', number: 17, role: 'driver', page: 'team/remco-raveel' },
+  {
+    id: 'remco-raveel',
+    name: 'Remco Raveel',
+    country: 'BE',
+    number: 17,
+    role: 'driver',
+    page: 'team/remco-raveel',
+    portrait: raveelPortrait,
+  },
 ];
 
 export const teamPrincipal: Person = {
