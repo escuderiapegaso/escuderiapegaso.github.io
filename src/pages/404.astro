@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { defaultLang } from '../i18n/config';
+import { getPath } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+
+const lang = defaultLang;
+const t = useTranslations(lang);
+---
+
+<BaseLayout lang={lang} routeKey="home" title={t.notFound.title}>
+  <PageHeader title="404" kicker={t.notFound.title} />
+  <section class="container" style="padding-block: 4rem 6rem; display: grid; gap: 1.5rem; justify-items: start;">
+    <p>{t.notFound.text}</p>
+    <a class="btn btn--primary" href={getPath(lang, 'home')}>{t.comingSoon.back}</a>
+  </section>
+</BaseLayout>

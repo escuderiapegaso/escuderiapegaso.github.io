@@ -1,0 +1,38 @@
+---
+/** Cabecera estándar de página interior: rótulo + título sobre fondo oscuro. */
+interface Props {
+  title: string;
+  kicker?: string;
+}
+
+const { title, kicker } = Astro.props;
+---
+
+<section class="page-header">
+  <div class="container">
+    {kicker && <p class="kicker page-header__kicker">{kicker}</p>}
+    <h1 class="page-header__title display">{title}</h1>
+  </div>
+</section>
+
+<style>
+  .page-header {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    background:
+      linear-gradient(115deg, var(--c-ink) 0%, var(--c-ink) 55%, var(--c-primary-dark) 55.1%, var(--c-primary) 100%);
+    color: #fff;
+  }
+
+  .page-header__kicker {
+    color: var(--c-silver);
+  }
+
+  .page-header__title {
+    max-width: 22ch;
+    margin-top: 0.75rem;
+    font-size: clamp(1.75rem, 1rem + 3.5vw, 3.5rem);
+    line-height: 1.1;
+  }
+</style>

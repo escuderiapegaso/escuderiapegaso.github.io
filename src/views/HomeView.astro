@@ -1,0 +1,248 @@
+---
+import { Image, Picture } from 'astro:assets';
+import heroPhoto from '../assets/photos/pegaso-268-barcelona-test.jpg';
+import carSide from '../assets/car/pegaso-268-side.png';
+import Flag from '../components/Flag.astro';
+import type { Lang } from '../i18n/config';
+import { getPath } from '../i18n/routes';
+import { useTranslations, fill } from '../i18n/ui';
+import { season, drivers, teamPrincipal } from '../data/team';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__media">
+    <Picture
+      src={heroPhoto}
+      formats={['avif', 'webp']}
+      widths={[768, 1280, 1920, 2560, 3200]}
+      sizes="100vw"
+      alt={`${season.car.model} · Circuit de Barcelona-Catalunya`}
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+  <div class="hero__content">
+    <div class="container">
+      <p class="kicker hero__kicker">{fill(t.home.kicker, { season: season.number })}</p>
+      <h1 id="hero-title" class="hero__title display">{season.car.model}</h1>
+      <p class="hero__lead">{t.home.lead}</p>
+      <a class="btn btn--primary" href={getPath(lang, 'car')}>
+        {t.home.cta}
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" fill="none" stroke="currentColor" stroke-width="1.8" /></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="facts" aria-labelledby="facts-title">
+  <div class="container">
+    <h2 id="facts-title" class="section-title">{fill(t.home.factsTitle, { season: season.number })}</h2>
+
+    <div class="facts__car">
+      <Image
+        src={carSide}
+        widths={[640, 1024, 1600, 2400]}
+        sizes="(min-width: 1320px) 1240px, 92vw"
+        alt={`${season.car.model}, ${t.common.sideView}`}
+      />
+    </div>
+
+    <dl class="facts__grid">
+      <div class="fact">
+        <dt>{t.common.chassis}</dt>
+        <dd>{season.car.chassis}</dd>
+      </div>
+      <div class="fact">
+        <dt>{t.common.powerUnit}</dt>
+        <dd>{season.powerUnit}</dd>
+      </div>
+      <div class="fact fact--drivers">
+        <dt>{t.common.drivers}</dt>
+        {
+          drivers.map((d) => (
+            <dd>
+              <a href={getPath(lang, d.page)} class="driver-chip">
+                <span class="driver-chip__number display">{d.number}</span>
+                <span class="driver-chip__name">{d.name}</span>
+                {d.country && <Flag code={d.country} label={t.countries[d.country]} />}
+              </a>
+            </dd>
+          ))
+        }
+      </div>
+      <div class="fact">
+        <dt>{t.common.teamPrincipal}</dt>
+        <dd>
+          <a href={getPath(lang, teamPrincipal.page)} class="fact__link">{teamPrincipal.name}</a>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    background: var(--c-ink);
+    color: #fff;
+  }
+
+  .hero__media :global(img) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: 60% 50%;
+  }
+
+  .hero__content {
+    padding-block: 2rem 2.75rem;
+    border-top: 3px solid var(--c-primary);
+  }
+
+  .hero__kicker {
+    color: var(--c-primary-light);
+  }
+
+  .hero__title {
+    margin-top: 0.75rem;
+    font-size: clamp(1.75rem, 0.9rem + 5vw, 4.5rem);
+    line-height: 1.05;
+  }
+
+  .hero__lead {
+    max-width: 34ch;
+    margin: 1rem 0 1.75rem;
+    font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.3125rem);
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  /* En escritorio la foto va a todo lo ancho, sin texto encima, para que el
+     coche se vea entero; el texto queda en la banda oscura inferior. */
+  @media (min-width: 900px) {
+    .hero__media :global(img) {
+      aspect-ratio: 10 / 3;
+      object-position: 55% 50%;
+    }
+
+    .hero__content {
+      padding-block: clamp(2.5rem, 4vw, 3.5rem);
+    }
+
+    .hero__content .container {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1rem 4rem;
+      align-items: end;
+    }
+
+    .hero__kicker {
+      grid-column: 1;
+    }
+
+    .hero__title {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .hero__lead {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      align-self: end;
+      margin: 0;
+    }
+
+    .hero__content .btn {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+
+  /* ---------- Datos de la temporada ---------- */
+  .facts {
+    padding-block: clamp(3.5rem, 7vw, 6rem);
+    background:
+      radial-gradient(120% 70% at 50% 45%, #fff 0%, var(--c-surface) 60%, var(--c-silver-light) 100%);
+  }
+
+  .facts__car {
+    margin: clamp(2rem, 4vw, 3.5rem) auto;
+    max-width: 1240px;
+  }
+
+  .facts__car :global(img) {
+    width: 100%;
+    filter: drop-shadow(0 24px 22px rgba(0, 0, 0, 0.18));
+  }
+
+  .facts__grid {
+    display: grid;
+    gap: 1px;
+    margin: 0;
+    background: var(--c-line);
+    border: 1px solid var(--c-line);
+  }
+
+  .fact {
+    padding: 1.5rem 1.75rem;
+    background: #fff;
+  }
+
+  .fact dt {
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+  }
+
+  .fact dd {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .fact--drivers dd + dd {
+    margin-top: 0.5rem;
+  }
+
+  .driver-chip,
+  .fact__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    transition: color 0.2s var(--ease);
+  }
+
+  .driver-chip:hover,
+  .fact__link:hover {
+    color: var(--c-primary);
+  }
+
+  .driver-chip__number {
+    min-width: 2.25rem;
+    font-size: 1.125rem;
+    color: var(--c-primary);
+  }
+
+  @media (min-width: 720px) {
+    .facts__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .facts__grid {
+      grid-template-columns: 1fr 1fr 1.4fr 1fr;
+    }
+  }
+</style>

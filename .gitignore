@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+
+# Material original (las versiones que usa la web están en src/assets)
+/logos/
+/circuits/
+/*.png
+/*.jpg
+/*.jpeg
+
+# Fuente sin licencia web confirmada
+*.otf

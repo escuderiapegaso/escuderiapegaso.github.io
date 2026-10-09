@@ -1,0 +1,41 @@
+---
+/**
+ * Raíz del sitio: redirige al idioma del navegador (castellano, inglés o
+ * catalán). Sin JavaScript, la etiqueta meta lleva al castellano.
+ */
+import { defaultLang } from '../i18n/config';
+import { getPath } from '../i18n/routes';
+
+const paths = {
+  es: getPath('es', 'home'),
+  en: getPath('en', 'home'),
+  ca: getPath('ca', 'home'),
+};
+const fallback = getPath(defaultLang, 'home');
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Escudería Pegaso</title>
+    <meta name="robots" content="noindex" />
+    <script is:inline define:vars={{ paths, fallback }}>
+      const prefs = navigator.languages || [navigator.language || ''];
+      let target = fallback;
+      for (const pref of prefs) {
+        const code = pref.toLowerCase().split('-')[0];
+        if (paths[code]) {
+          target = paths[code];
+          break;
+        }
+      }
+      location.replace(target);
+    </script>
+    <meta http-equiv="refresh" content={`2; url=${fallback}`} />
+  </head>
+  <body style="background:#0d0d0f;color:#fff;font-family:system-ui,sans-serif">
+    <p style="padding:2rem"><a href={fallback} style="color:#fff">Escudería Pegaso</a></p>
+  </body>
+</html>

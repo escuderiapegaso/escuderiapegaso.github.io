@@ -1,0 +1,49 @@
+---
+/**
+ * Genera todas las páginas en los tres idiomas a partir del mapa de rutas
+ * (`src/i18n/routes.ts`). Cada clave se pinta con su vista; las secciones
+ * que aún no tienen vista propia muestran la página «en construcción».
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HomeView from '../../views/HomeView.astro';
+import ComingSoonView from '../../views/ComingSoonView.astro';
+import { langs, type Lang } from '../../i18n/config';
+import { routes, type RouteKey } from '../../i18n/routes';
+import { useTranslations } from '../../i18n/ui';
+import { drivers, teamPrincipal } from '../../data/team';
+
+export const getStaticPaths = (() =>
+  langs.flatMap((lang) =>
+    (Object.keys(routes) as RouteKey[]).map((key) => ({
+      params: { lang, slug: routes[key][lang] || undefined },
+      props: { lang, routeKey: key },
+    }))
+  )) satisfies GetStaticPaths;
+
+interface Props {
+  lang: Lang;
+  routeKey: RouteKey;
+}
+
+const { lang, routeKey } = Astro.props;
+const t = useTranslations(lang);
+
+// Título y rótulo de cada página
+const people = [...drivers, teamPrincipal];
+const person = people.find((p) => p.page === routeKey);
+
+let title: string | undefined;
+let kicker: string | undefined;
+
+if (person) {
+  title = person.role === 'teamPrincipal' ? 'nicorz' : person.name;
+  kicker = person.role === 'teamPrincipal' ? t.common.teamPrincipal : `${t.common.driver} #${person.number}`;
+} else if (routeKey !== 'home') {
+  title = t.pages[routeKey as keyof typeof t.pages];
+}
+---
+
+<BaseLayout lang={lang} routeKey={routeKey} title={title}>
+  {routeKey === 'home' ? <HomeView lang={lang} /> : <ComingSoonView lang={lang} title={title!} kicker={kicker} />}
+</BaseLayout>

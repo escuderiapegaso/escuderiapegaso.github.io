@@ -1,0 +1,73 @@
+---
+import '@fontsource/barlow/400.css';
+import '@fontsource/barlow/500.css';
+import '@fontsource/barlow/600.css';
+import '@fontsource/barlow/700.css';
+import '@fontsource/michroma/400.css';
+import '../styles/global.css';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { langs, languages, defaultLang, type Lang } from '../i18n/config';
+import { getPath, withBase, type RouteKey } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  routeKey: RouteKey;
+  /** Título de la página (sin el nombre del equipo). */
+  title?: string;
+  description?: string;
+}
+
+const { lang, routeKey, title, description } = Astro.props;
+const t = useTranslations(lang);
+
+const fullTitle = title ? `${title} | ${t.site.name}` : `${t.site.name} · Formula 1`;
+const metaDescription = description ?? t.site.description;
+const canonical = new URL(getPath(lang, routeKey), Astro.site);
+const ogImage = new URL(withBase('/icon-512.png'), Astro.site);
+---
+
+<!doctype html>
+<html lang={languages[lang].htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <meta name="theme-color" content="#0d0d0f" />
+    <link rel="canonical" href={canonical} />
+    {
+      langs.map((l) => (
+        <link rel="alternate" hreflang={languages[l].htmlLang} href={new URL(getPath(l, routeKey), Astro.site)} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={new URL(getPath(defaultLang, routeKey), Astro.site)} />
+
+    <link rel="icon" type="image/png" sizes="32x32" href={withBase('/favicon-32.png')} />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={t.site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={languages[lang].ogLocale} />
+  </head>
+  <body>
+    <a class="skip-link" href="#content">{t.nav.skip}</a>
+    <Header lang={lang} routeKey={routeKey} />
+    <main id="content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer lang={lang} routeKey={routeKey} />
+  </body>
+</html>
+
+<style>
+  main:focus {
+    outline: none;
+  }
+</style>
