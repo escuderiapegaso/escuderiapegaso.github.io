@@ -1,36 +1,12 @@
-# Parrilla de la temporada 68. Para una temporada nueva, copia este archivo
-# con el número de la temporada (p. ej. 69.yml) y cámbialo.
-#
-# EQUIPOS (15)
-#   id:     identificador corto, en minúsculas y sin espacios (p. ej. mclaren)
-#   name:   nombre visible
-#   color:  color del equipo, en hexadecimal entre comillas (p. ej. '#ff8000')
-#   emblem: archivo del emblema en src/assets/teams/ (p. ej. mclaren.png). Opcional.
-#           PNG con fondo transparente, cuadrado, unos 128 px.
-#
-# El equipo con id «pegaso» es el nuestro: sus pilotos salen resaltados.
-
 teams:
   - id: pegaso
     name: Pioneer Escudería Pegaso
     color: '#c3c3c3'
     emblem: pegaso.png
-
-  # - id: ejemplo
-  #   name: Equipo de ejemplo
-  #   color: '#3366cc'
-  #   emblem: ejemplo.png
-
-# PILOTOS (30)
-#   id:      identificador corto, en minúsculas con guiones (p. ej. john-cannon).
-#            Es el que se usa en los archivos de resultados.
-#   name:    nombre visible
-#   country: código de país de dos letras (CA, BE, ES...)
-#   number:  dorsal
-#   team:    id del equipo
-#   helmet:  archivo del casco en src/assets/helmets/ (p. ej. john-cannon.png). Opcional.
-#            PNG con fondo transparente, cuadrado, unos 128 px.
-
+  - id: red-bull
+    name: Red Bull Racing Vaillante
+    color: '#192aa9'
+    emblem: /src/assets/teams/red-bull.webp
 drivers:
   - id: john-cannon
     name: John Cannon
@@ -38,17 +14,21 @@ drivers:
     number: 10
     team: pegaso
     helmet: cannon-helmet
-
   - id: remco-raveel
     name: Remco Raveel
     country: BE
     number: 17
     team: pegaso
-    helmet: raveel-helmet
-
-  # - id: nombre-apellido
-  #   name: Nombre Apellido
-  #   country: ES
-  #   number: 1
-  #   team: ejemplo
-  #   helmet: nombre-apellido.png
+    helmet: /src/assets/helmets/raveel-helmet.png
+  - id: jose-reckziegel
+    name: José Reckziegel
+    country: BR
+    number: 2
+    team: pegaso
+    helmet: /src/assets/helmets/josereckziegel-helmet.webp
+  - id: philippe-saintgermain-iii
+    name: Philippe de Saint-Germain III
+    country: FR
+    number: 1
+    team: pegaso
+    helmet: /src/assets/helmets/saintgermain-helmet.webp
