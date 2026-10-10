@@ -1,5 +1,5 @@
-# Gran Premio de México · Ronda 20 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de México
+round: 20
 
 qualifying:
   weather:

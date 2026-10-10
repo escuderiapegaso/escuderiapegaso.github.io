@@ -178,11 +178,19 @@ export function pointsFor(rows: Row[], driverId: string): number {
 const helmets = import.meta.glob<ImageMetadata>('../assets/helmets/*.{png,webp,jpg}', { eager: true, import: 'default' });
 const emblems = import.meta.glob<ImageMetadata>('../assets/teams/*.{png,webp,jpg,svg}', { eager: true, import: 'default' });
 
+/**
+ * Busca una imagen por su nombre. Acepta «casco.png», «casco» (sin extensión)
+ * o la ruta completa que guarda el panel («/src/assets/helmets/casco.png»).
+ */
 function pick(files: Record<string, ImageMetadata>, folder: string, name?: string) {
   if (!name) return undefined;
-  const img = files[`../assets/${folder}/${name}`];
-  if (!img) throw new Error(`No encuentro la imagen src/assets/${folder}/${name}. Revisa el nombre en la parrilla.`);
-  return img;
+  const wanted = name.split('/').pop()!.toLowerCase();
+  const base = (f: string) => f.split('/').pop()!.toLowerCase();
+  const match = Object.entries(files).find(
+    ([f]) => base(f) === wanted || base(f).replace(/\.\w+$/, '') === wanted
+  );
+  if (!match) throw new Error(`No encuentro la imagen «${name}» en src/assets/${folder}/. Revisa el nombre en la parrilla.`);
+  return match[1];
 }
 
 export const helmetImage = (d: GridDriver) => pick(helmets, 'helmets', d.helmet);

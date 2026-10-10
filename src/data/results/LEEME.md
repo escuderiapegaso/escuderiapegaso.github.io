@@ -1,5 +1,8 @@
 # Resultados
 
+**Lo normal es editarlos desde el panel: https://escuderiapegaso.github.io/admin/ → «Resultados · T68».**
+Lo que sigue explica el formato de los archivos, por si alguna vez hay que tocarlos a mano.
+
 Un archivo por Gran Premio y temporada: `src/data/results/<temporada>/<circuito>.yml`.
 El nombre del circuito es el mismo que en `src/data/calendar.ts` (melbourne, shanghai…).
 

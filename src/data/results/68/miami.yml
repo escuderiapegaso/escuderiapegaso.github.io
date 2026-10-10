@@ -1,5 +1,5 @@
-# Gran Premio de Miami · Ronda 6 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Miami
+round: 6
 
 qualifying:
   weather:

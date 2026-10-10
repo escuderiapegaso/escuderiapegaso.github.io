@@ -1,5 +1,5 @@
-# Gran Premio de Canadá · Ronda 7 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Canadá
+round: 7
 
 qualifying:
   weather:

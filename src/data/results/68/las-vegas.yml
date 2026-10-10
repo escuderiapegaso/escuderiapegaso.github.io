@@ -1,5 +1,5 @@
-# Gran Premio de Las Vegas · Ronda 22 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Las Vegas
+round: 22
 
 qualifying:
   weather:

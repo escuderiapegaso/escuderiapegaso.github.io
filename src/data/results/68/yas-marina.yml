@@ -1,5 +1,5 @@
-# Gran Premio de Abu Dabi · Ronda 24 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Abu Dabi
+round: 24
 
 qualifying:
   weather:

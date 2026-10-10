@@ -1,0 +1,13 @@
+city: Shanghai
+length: 5.451
+laps: 55
+qualiRecord:
+  time: '1:35.580'
+  driver: Philippe de Saint-Germain III
+  team: Red Bull Racing Vaillante
+  season: null
+raceRecord:
+  time: '1:36.408'
+  driver: Bernardino Campolargo
+  team: Red Bull Racing Vaillante
+  season: null

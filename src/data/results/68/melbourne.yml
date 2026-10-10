@@ -1,5 +1,5 @@
-# Gran Premio de Australia · Ronda 1 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Australia
+round: 1
 
 qualifying:
   weather:

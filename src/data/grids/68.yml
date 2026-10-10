@@ -12,8 +12,8 @@
 
 teams:
   - id: pegaso
-    name: Escudería Pegaso
-    color: '#a50034'
+    name: Pioneer Escudería Pegaso
+    color: '#c3c3c3'
     emblem: pegaso.png
 
   # - id: ejemplo
@@ -37,14 +37,14 @@ drivers:
     country: CA
     number: 10
     team: pegaso
-    helmet:
+    helmet: cannon-helmet
 
   - id: remco-raveel
     name: Remco Raveel
     country: BE
     number: 17
     team: pegaso
-    helmet:
+    helmet: raveel-helmet
 
   # - id: nombre-apellido
   #   name: Nombre Apellido

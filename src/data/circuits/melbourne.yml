@@ -1,0 +1,13 @@
+city: Melbourne
+length: 5.278
+laps: 58
+qualiRecord:
+  time: '1:23.449'
+  driver: Philippe de Saint-Germain III
+  team: Red Bull Racing Vaillante
+  season: null
+raceRecord:
+  time: '1:24.108'
+  driver: Luka Jerman
+  team: Porsche Racing
+  season: null

@@ -1,5 +1,5 @@
-# Gran Premio de Azerbaiyán · Ronda 17 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Azerbaiyán
+round: 17
 
 qualifying:
   weather:

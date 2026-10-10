@@ -10,7 +10,7 @@
  * Las imágenes van en src/assets/news/ y se citan como /src/assets/news/foto.jpg.
  */
 import { defineCollection, z } from 'astro:content';
-import { file, glob } from 'astro/loaders';
+import { glob } from 'astro/loaders';
 import { newsCategories } from './data/newsCategories';
 import { weatherTypes } from './data/weather';
 
@@ -46,7 +46,10 @@ const news = defineCollection({
 /* ---------- Carreras ---------- */
 
 /** Número opcional: vacío = sin dato. */
-const optionalNumber = z.number().nullish().transform((v) => v ?? undefined);
+const optionalNumber = z.preprocess(
+  (v) => (v === '' || v === null ? undefined : typeof v === 'string' ? Number(v.replace(',', '.')) : v),
+  z.number().optional()
+);
 
 const record = z
   .object({
@@ -58,9 +61,9 @@ const record = z
   .nullish()
   .transform((r) => (r && r.time ? r : undefined));
 
-/** Datos fijos de cada circuito: src/data/circuits.yml */
+/** Datos fijos de cada circuito: src/data/circuits/<circuito>.yml (se editan en /admin/) */
 const circuits = defineCollection({
-  loader: file('src/data/circuits.yml'),
+  loader: glob({ pattern: '*.yml', base: './src/data/circuits' }),
   schema: z.object({
     city: optionalText,
     length: optionalNumber,
@@ -95,10 +98,11 @@ const grids = defineCollection({
   }),
 });
 
-const weather = z
-  .object({ type: z.enum(weatherTypes), chance: z.number().min(0).max(100).nullish() })
-  .nullish()
-  .transform((w) => w ?? undefined);
+/** Clima: si no se ha elegido el tipo, se trata como «pendiente». */
+const weather = z.preprocess(
+  (w) => (w && typeof w === 'object' && (w as { type?: unknown }).type ? w : undefined),
+  z.object({ type: z.enum(weatherTypes), chance: optionalNumber }).optional()
+);
 
 /** Tiempo como texto ('1:18.456', '+5.321'); se aceptan también números. */
 const timeText = z

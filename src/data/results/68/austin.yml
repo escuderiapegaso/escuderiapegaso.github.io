@@ -1,5 +1,5 @@
-# Gran Premio de Estados Unidos · Ronda 19 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Estados Unidos
+round: 19
 
 qualifying:
   weather:

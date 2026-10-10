@@ -1,5 +1,5 @@
-# Gran Premio de Hungría · Ronda 13 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Hungría
+round: 13
 
 qualifying:
   weather:

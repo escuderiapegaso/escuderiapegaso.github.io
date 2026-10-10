@@ -1,5 +1,5 @@
-# Gran Premio de Singapur · Ronda 18 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Singapur
+round: 18
 
 qualifying:
   weather:

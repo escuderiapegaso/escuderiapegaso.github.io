@@ -1,5 +1,5 @@
-# Gran Premio de Baréin · Ronda 4 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Baréin
+round: 4
 
 qualifying:
   weather:

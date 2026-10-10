@@ -1,5 +1,5 @@
-# Gran Premio de Catar · Ronda 23 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Catar
+round: 23
 
 qualifying:
   weather:

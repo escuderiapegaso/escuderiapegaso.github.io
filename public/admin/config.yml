@@ -7,9 +7,9 @@ backend:
   repo: escuderiapegaso/escuderiapegaso.github.io
   branch: main
   commit_messages:
-    create: 'Nueva noticia: {{slug}}'
-    update: 'Actualiza noticia: {{slug}}'
-    delete: 'Borra noticia: {{slug}}'
+    create: 'Nuevo ({{collection}}): {{slug}}'
+    update: 'Actualiza ({{collection}}): {{slug}}'
+    delete: 'Borra ({{collection}}): {{slug}}'
     uploadMedia: 'Sube imagen: {{path}}'
     deleteMedia: 'Borra imagen: {{path}}'
 
@@ -125,3 +125,224 @@ collections:
         label: Texto
         widget: richtext
         i18n: true
+
+  # ---------------------------------------------------------------------------
+  # Resultados de cada Gran Premio (un archivo por GP y temporada).
+  # Para una temporada nueva: copia este bloque y cambia «68» por el número nuevo.
+  # ---------------------------------------------------------------------------
+  - name: results-68
+    label: Resultados · T68
+    label_singular: Gran Premio
+    description: Clima, clasificación y carrera de cada Gran Premio de la temporada 68.
+    folder: /src/data/results/68
+    extension: yml
+    format: yaml
+    create: false
+    delete: false
+    identifier_field: name
+    summary: 'Ronda {{round}} · {{name}}'
+    sortable_fields:
+      fields: [round, name]
+      default: { field: round, direction: ascending }
+    fields:
+      - { name: name, label: Gran Premio, widget: string, readonly: true }
+      - { name: round, label: Ronda, widget: number, value_type: int, readonly: true }
+
+      - name: qualifying
+        label: Clasificación
+        widget: object
+        fields:
+          - name: weather
+            label: Clima
+            widget: object
+            required: false
+            fields:
+              - name: type
+                label: Tipo
+                widget: select
+                required: false
+                options:
+                  - { label: Soleado, value: sunny }
+                  - { label: Mayormente soleado, value: mostly-sunny }
+                  - { label: Parcialmente nublado, value: partly-cloudy }
+                  - { label: Nublado, value: cloudy }
+                  - { label: Llovizna, value: drizzle }
+                  - { label: Lluvia ligera, value: light-rain }
+                  - { label: Chubascos, value: showers }
+                  - { label: Lluvia, value: rain }
+                  - { label: Tormenta, value: storm }
+                  - { label: Tormenta fuerte, value: heavy-storm }
+              - { name: chance, label: Porcentaje, widget: number, value_type: int, min: 0, max: 100, required: false }
+          - name: results
+            label: Resultados
+            hint: En orden, del primero al último. Puedes arrastrar las filas para reordenarlas.
+            widget: list
+            required: false
+            add_to_top: false
+            summary: '{{fields.driver}} · {{fields.time}}'
+            fields:
+              - name: driver
+                label: Piloto
+                widget: relation
+                collection: grids
+                file: grid-68
+                value_field: drivers.*.id
+                display_fields: ['drivers.*.name']
+                search_fields: ['drivers.*.name']
+              - name: time
+                label: Tiempo
+                hint: "Tiempo de vuelta ('1:18.456') o diferencia con el primero ('+0.321'). Vacío si no marcó tiempo."
+                widget: string
+                required: false
+
+      - name: race
+        label: Carrera
+        widget: object
+        fields:
+          - name: weather
+            label: Clima
+            widget: object
+            required: false
+            fields:
+              - name: type
+                label: Tipo
+                widget: select
+                required: false
+                options:
+                  - { label: Soleado, value: sunny }
+                  - { label: Mayormente soleado, value: mostly-sunny }
+                  - { label: Parcialmente nublado, value: partly-cloudy }
+                  - { label: Nublado, value: cloudy }
+                  - { label: Llovizna, value: drizzle }
+                  - { label: Lluvia ligera, value: light-rain }
+                  - { label: Chubascos, value: showers }
+                  - { label: Lluvia, value: rain }
+                  - { label: Tormenta, value: storm }
+                  - { label: Tormenta fuerte, value: heavy-storm }
+              - { name: chance, label: Porcentaje, widget: number, value_type: int, min: 0, max: 100, required: false }
+          - name: fastestLap
+            label: Vuelta rápida (opcional)
+            widget: relation
+            required: false
+            collection: grids
+            file: grid-68
+            value_field: drivers.*.id
+            display_fields: ['drivers.*.name']
+            search_fields: ['drivers.*.name']
+          - name: results
+            label: Resultados
+            hint: En orden, del primero al último. Los abandonos (DNF) van al final.
+            widget: list
+            required: false
+            add_to_top: false
+            summary: '{{fields.driver}} · {{fields.laps}} v · {{fields.time}}'
+            fields:
+              - name: driver
+                label: Piloto
+                widget: relation
+                collection: grids
+                file: grid-68
+                value_field: drivers.*.id
+                display_fields: ['drivers.*.name']
+                search_fields: ['drivers.*.name']
+              - { name: laps, label: Vueltas, widget: number, value_type: int, min: 0, required: false }
+              - name: time
+                label: Tiempo
+                hint: "Tiempo total ('1:32:45.123') o diferencia con el primero ('+5.321'). Si acabó con vueltas de menos, déjalo vacío: basta con las vueltas."
+                widget: string
+                required: false
+              - { name: dnf, label: Abandono (DNF), widget: boolean, default: false, required: false }
+
+  # ---------------------------------------------------------------------------
+  # Datos fijos de cada circuito (valen para todas las temporadas)
+  # ---------------------------------------------------------------------------
+  - name: circuits
+    label: Circuitos
+    label_singular: Circuito
+    description: Longitud, vueltas y récords de cada circuito.
+    folder: /src/data/circuits
+    extension: yml
+    format: yaml
+    create: false
+    delete: false
+    identifier_field: city
+    summary: '{{city}}'
+    sortable_fields: [city]
+    fields:
+      - { name: city, label: Ciudad, widget: string, required: false }
+      - { name: length, label: Longitud de la vuelta (km), widget: number, value_type: float, step: 0.001, min: 0, required: false }
+      - { name: laps, label: Vueltas de la carrera, widget: number, value_type: int, min: 0, required: false }
+      - name: qualiRecord
+        label: Récord de clasificación
+        widget: object
+        required: false
+        fields:
+          - { name: time, label: Tiempo, hint: "Por ejemplo '1:23.449'", widget: string, required: false }
+          - { name: driver, label: Piloto, widget: string, required: false }
+          - { name: team, label: Equipo, widget: string, required: false }
+          - { name: season, label: Temporada, widget: number, value_type: int, min: 1, required: false }
+      - name: raceRecord
+        label: Récord de carrera
+        widget: object
+        required: false
+        fields:
+          - { name: time, label: Tiempo, hint: "Por ejemplo '1:24.108'", widget: string, required: false }
+          - { name: driver, label: Piloto, widget: string, required: false }
+          - { name: team, label: Equipo, widget: string, required: false }
+          - { name: season, label: Temporada, widget: number, value_type: int, min: 1, required: false }
+
+  # ---------------------------------------------------------------------------
+  # Parrillas (equipos y pilotos de cada temporada)
+  # Para una temporada nueva: copia el bloque «grid-68» y cambia el número.
+  # ---------------------------------------------------------------------------
+  - name: grids
+    label: Parrillas
+    description: Equipos y pilotos de cada temporada.
+    files:
+      - name: grid-68
+        label: Parrilla · T68
+        file: /src/data/grids/68.yml
+        format: yaml
+        fields:
+          - name: teams
+            label: Equipos
+            label_singular: Equipo
+            hint: El equipo con identificador «pegaso» es el nuestro (sus pilotos salen resaltados).
+            widget: list
+            summary: '{{fields.name}}'
+            fields:
+              - { name: id, label: Identificador, hint: 'Corto, en minúsculas y sin espacios (p. ej. mclaren).', widget: string, pattern: ['^[a-z0-9-]+$', 'Solo minúsculas, números y guiones'] }
+              - { name: name, label: Nombre, widget: string }
+              - { name: color, label: Color, widget: color }
+              - name: emblem
+                label: Emblema
+                hint: PNG con fondo transparente, cuadrado (unos 128 px).
+                widget: image
+                required: false
+                media_folder: /src/assets/teams
+                public_folder: /src/assets/teams
+          - name: drivers
+            label: Pilotos
+            label_singular: Piloto
+            widget: list
+            summary: '#{{fields.number}} {{fields.name}}'
+            fields:
+              - { name: id, label: Identificador, hint: 'En minúsculas con guiones (p. ej. john-cannon).', widget: string, pattern: ['^[a-z0-9-]+$', 'Solo minúsculas, números y guiones'] }
+              - { name: name, label: Nombre, widget: string }
+              - { name: country, label: País, hint: 'Código de dos letras: CA, BE, ES…', widget: string, required: false, pattern: ['^[A-Za-z]{2}$', 'Dos letras'] }
+              - { name: number, label: Dorsal, widget: number, value_type: int, min: 0, required: false }
+              - name: team
+                label: Equipo
+                widget: relation
+                collection: grids
+                file: grid-68
+                value_field: teams.*.id
+                display_fields: ['teams.*.name']
+                search_fields: ['teams.*.name']
+              - name: helmet
+                label: Casco
+                hint: PNG con fondo transparente, cuadrado (unos 128 px).
+                widget: image
+                required: false
+                media_folder: /src/assets/helmets
+                public_folder: /src/assets/helmets

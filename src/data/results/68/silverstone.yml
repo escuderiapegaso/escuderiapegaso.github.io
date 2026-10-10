@@ -1,5 +1,5 @@
-# Gran Premio de Gran Bretaña · Ronda 11 · Temporada 68
-# Cómo rellenarlo: src/data/results/LEEME.md
+name: Gran Premio de Gran Bretaña
+round: 11
 
 qualifying:
   weather:
