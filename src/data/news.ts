@@ -2,6 +2,8 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { langs, type Lang } from '../i18n/config';
 import { getPath } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+import type { NewsCategory } from './newsCategories';
 
 export type NewsEntry = CollectionEntry<'news'>;
 
@@ -38,4 +40,25 @@ export async function newsAlternates(slug: string): Promise<Record<Lang, string>
 export function formatDate(date: Date, lang: Lang): string {
   const locale = { es: 'es-ES', en: 'en-GB', ca: 'ca-ES' }[lang];
   return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(date);
+}
+
+/** Nombre visible de una categoría (el mismo que el de su sección). */
+export function categoryLabel(category: NewsCategory, lang: Lang): string {
+  const t = useTranslations(lang);
+  return category === 'ddp' ? t.nav.ddpShort : t.pages[category];
+}
+
+/** Rótulo de una noticia: el suyo propio o, si no tiene, su categoría. */
+export function newsKicker(entry: NewsEntry, lang: Lang): string {
+  return entry.data.tag ?? categoryLabel(entry.data.category, lang);
+}
+
+/** Dirección del listado de noticias filtrado por una categoría. */
+export function categoryPath(lang: Lang, category: NewsCategory): string {
+  return `${getPath(lang, 'news')}?c=${category}`;
+}
+
+/** Encuadre de la imagen (centro por defecto). */
+export function imagePosition(entry: NewsEntry): string {
+  return entry.data.imagePosition ?? '50% 50%';
 }

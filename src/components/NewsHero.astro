@@ -9,7 +9,7 @@ import { Picture } from 'astro:assets';
 import CircleArrow from './CircleArrow.astro';
 import type { Lang } from '../i18n/config';
 import { useTranslations, fill } from '../i18n/ui';
-import { newsPath, splitId, type NewsEntry } from '../data/news';
+import { imagePosition, newsKicker, newsPath, splitId, type NewsEntry } from '../data/news';
 
 interface Props {
   lang: Lang;
@@ -44,10 +44,10 @@ const total = items.length;
                 loading={i === 0 ? 'eager' : 'lazy'}
                 fetchpriority={i === 0 ? 'high' : 'auto'}
                 class="slide__img"
-                style={`object-position: ${item.data.imagePosition}`}
+                style={`object-position: ${imagePosition(item)}`}
               />
               <div class="slide__content">
-                {item.data.tag && <p class="slide__tag">{item.data.tag}</p>}
+                <p class="slide__tag">{newsKicker(item, lang)}</p>
                 <h2 class="slide__title display">
                   <a href={href}>{item.data.title}</a>
                 </h2>

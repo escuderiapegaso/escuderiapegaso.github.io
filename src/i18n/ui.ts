@@ -38,7 +38,8 @@ interface UIStrings {
     next: string;
     finished: string;
   };
-  article: { back: string; published: string };
+  article: { back: string; published: string; more: string; viewAll: string };
+  newsList: { intro: string; filter: string; all: string; loadMore: string; empty: string; results: string };
   footer: { partners: string; teamSponsor: string; powerUnit: string; explore: string; disclaimer: string };
   comingSoon: { title: string; text: string; back: string };
   notFound: { title: string; text: string };
@@ -103,7 +104,15 @@ export const ui: Record<Lang, UIStrings> = {
       next: 'Carreras siguientes',
       finished: 'Temporada finalizada',
     },
-    article: { back: 'Todas las noticias', published: 'Publicado el' },
+    article: { back: 'Todas las noticias', published: 'Publicado el', more: 'Más noticias', viewAll: 'Ver todas' },
+    newsList: {
+      intro: 'Toda la actualidad de la Escudería Pegaso: carreras, coche, pilotos y mucho más.',
+      filter: 'Filtrar por categoría',
+      all: 'Todas',
+      loadMore: 'Ver más noticias',
+      empty: 'Todavía no hay noticias en esta categoría.',
+      results: '{n} noticias',
+    },
     footer: {
       partners: 'Socios oficiales',
       teamSponsor: 'Patrocinador principal',
@@ -178,7 +187,15 @@ export const ui: Record<Lang, UIStrings> = {
       next: 'Next races',
       finished: 'Season finished',
     },
-    article: { back: 'All news', published: 'Published on' },
+    article: { back: 'All news', published: 'Published on', more: 'More news', viewAll: 'View all' },
+    newsList: {
+      intro: 'The latest from Escudería Pegaso: races, the car, our drivers and more.',
+      filter: 'Filter by category',
+      all: 'All',
+      loadMore: 'Load more news',
+      empty: 'There is no news in this category yet.',
+      results: '{n} stories',
+    },
     footer: {
       partners: 'Official partners',
       teamSponsor: 'Team sponsor',
@@ -253,7 +270,15 @@ export const ui: Record<Lang, UIStrings> = {
       next: 'Curses següents',
       finished: 'Temporada acabada',
     },
-    article: { back: 'Totes les notícies', published: 'Publicat el' },
+    article: { back: 'Totes les notícies', published: 'Publicat el', more: 'Més notícies', viewAll: 'Veure-les totes' },
+    newsList: {
+      intro: "Tota l'actualitat de l'Escudería Pegaso: curses, cotxe, pilots i molt més.",
+      filter: 'Filtra per categoria',
+      all: 'Totes',
+      loadMore: 'Mostra més notícies',
+      empty: 'Encara no hi ha notícies en aquesta categoria.',
+      results: '{n} notícies',
+    },
     footer: {
       partners: 'Socis oficials',
       teamSponsor: 'Patrocinador principal',

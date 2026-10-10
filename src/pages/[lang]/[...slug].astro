@@ -10,6 +10,7 @@ import { getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import HomeView from '../../views/HomeView.astro';
 import ArticleView from '../../views/ArticleView.astro';
+import NewsListView from '../../views/NewsListView.astro';
 import ComingSoonView from '../../views/ComingSoonView.astro';
 import { langs, type Lang } from '../../i18n/config';
 import { routes, type RouteKey } from '../../i18n/routes';
@@ -77,6 +78,8 @@ if (entry) {
       <ArticleView lang={lang} entry={entry} />
     ) : routeKey === 'home' ? (
       <HomeView lang={lang} />
+    ) : routeKey === 'news' ? (
+      <NewsListView lang={lang} />
     ) : (
       <ComingSoonView lang={lang} title={title!} kicker={kicker} />
     )

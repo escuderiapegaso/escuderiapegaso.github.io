@@ -6,7 +6,15 @@ import CircleArrow from '../components/CircleArrow.astro';
 import type { Lang } from '../i18n/config';
 import { getPath } from '../i18n/routes';
 import { useTranslations } from '../i18n/ui';
-import { formatDate, type NewsEntry } from '../data/news';
+import NewsCard from '../components/NewsCard.astro';
+import {
+  formatDate,
+  getNews,
+  imagePosition,
+  newsKicker,
+  categoryPath,
+  type NewsEntry,
+} from '../data/news';
 
 interface Props {
   lang: Lang;
@@ -16,7 +24,10 @@ interface Props {
 const { lang, entry } = Astro.props;
 const t = useTranslations(lang);
 const { Content } = await render(entry);
-const { title, date, tag, excerpt, image, imageAlt, imagePosition } = entry.data;
+const { title, date, excerpt, image, imageAlt, category } = entry.data;
+
+// Las tres noticias más recientes, sin contar esta
+const more = (await getNews(lang)).filter((e) => e.id !== entry.id).slice(0, 3);
 ---
 
 <article class="article">
@@ -30,10 +41,12 @@ const { title, date, tag, excerpt, image, imageAlt, imagePosition } = entry.data
       loading="eager"
       fetchpriority="high"
       class="article__img"
-      style={`object-position: ${imagePosition}`}
+      style={`object-position: ${imagePosition(entry)}`}
     />
     <div class="container article__heading">
-      {tag && <p class="kicker article__tag">{tag}</p>}
+      <p class="kicker article__tag">
+        <a href={categoryPath(lang, category)}>{newsKicker(entry, lang)}</a>
+      </p>
       <h1 class="article__title display">{title}</h1>
       <p class="article__date">
         {t.article.published} <time datetime={date.toISOString().slice(0, 10)}>{formatDate(date, lang)}</time>
@@ -53,6 +66,29 @@ const { title, date, tag, excerpt, image, imageAlt, imagePosition } = entry.data
     </a>
   </div>
 </article>
+
+{
+  more.length > 0 && (
+    <section class="more" aria-labelledby="more-title">
+      <div class="container">
+        <div class="more__head">
+          <h2 id="more-title" class="section-title">{t.article.more}</h2>
+          <a class="discover" href={getPath(lang, 'news')}>
+            {t.article.viewAll}
+            <CircleArrow />
+          </a>
+        </div>
+        <ul class="more__grid" role="list">
+          {more.map((e) => (
+            <li>
+              <NewsCard lang={lang} entry={e} excerpt={false} tone="dark" />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
 
 <style>
   .article__hero {
@@ -93,6 +129,44 @@ const { title, date, tag, excerpt, image, imageAlt, imagePosition } = entry.data
 
   .article__tag {
     color: #fff;
+  }
+
+  .article__tag a {
+    text-decoration: none;
+  }
+
+  .article__tag a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  /* ---------- Más noticias ---------- */
+  .more {
+    padding-block: clamp(3rem, 6vw, 4.5rem);
+    background: var(--c-ink);
+    color: #fff;
+  }
+
+  .more__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+
+  .more__grid {
+    display: grid;
+    gap: 1.25rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 720px) {
+    .more__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   .article__tag::before {

@@ -1,0 +1,202 @@
+---
+/**
+ * Listado de noticias: todas las publicadas del idioma, de la más reciente
+ * a la más antigua, con filtro por categoría y botón «Ver más».
+ * Sin JavaScript se ven todas, sin filtro.
+ * El filtro también se puede abrir con un enlace: /es/noticias/?c=car
+ */
+import PageHeader from '../components/PageHeader.astro';
+import NewsCard from '../components/NewsCard.astro';
+import type { Lang } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+import { getNews, categoryLabel } from '../data/news';
+import { newsCategories } from '../data/newsCategories';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const items = await getNews(lang);
+
+// Solo se ofrecen las categorías que tienen alguna noticia
+const used = newsCategories.filter((c) => items.some((e) => e.data.category === c));
+const PAGE = 12;
+---
+
+<PageHeader title={t.pages.news} kicker={t.site.name} />
+
+<section class="news-list" data-news-list data-page={PAGE}>
+  <div class="container">
+    <p class="news-list__intro">{t.newsList.intro}</p>
+
+    {
+      used.length > 1 && (
+        <div class="filters" role="group" aria-label={t.newsList.filter} data-filters hidden>
+          <button type="button" class="chip" aria-pressed="true" data-filter="">
+            {t.newsList.all}
+          </button>
+          {used.map((c) => (
+            <button type="button" class="chip" aria-pressed="false" data-filter={c}>
+              {categoryLabel(c, lang)}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    <p class="visually-hidden" aria-live="polite" data-status data-template={t.newsList.results}></p>
+
+    <ul class="news-grid" role="list">
+      {
+        items.map((entry) => (
+          <li data-category={entry.data.category}>
+            <NewsCard lang={lang} entry={entry} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="news-list__empty" data-empty hidden={items.length > 0}>{t.newsList.empty}</p>
+
+    <div class="news-list__more">
+      <button type="button" class="btn btn--primary" data-more hidden>{t.newsList.loadMore}</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-news-list]').forEach((root) => {
+    const page = Number(root.dataset.page) || 12;
+    const items = [...root.querySelectorAll<HTMLElement>('li[data-category]')];
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const filters = root.querySelector<HTMLElement>('[data-filters]');
+    const more = root.querySelector<HTMLButtonElement>('[data-more]')!;
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+
+    const valid = new Set(chips.map((c) => c.dataset.filter));
+    let category = new URLSearchParams(location.search).get('c') ?? '';
+    if (!valid.has(category)) category = '';
+    let limit = page;
+
+    function render(announce = false) {
+      const matching = items.filter((li) => !category || li.dataset.category === category);
+      items.forEach((li) => (li.hidden = true));
+      matching.slice(0, limit).forEach((li) => (li.hidden = false));
+      more.hidden = matching.length <= limit;
+      empty.hidden = matching.length > 0;
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === category)));
+      if (announce) status.textContent = status.dataset.template!.replace('{n}', String(matching.length));
+    }
+
+    chips.forEach((chip) =>
+      chip.addEventListener('click', () => {
+        category = chip.dataset.filter ?? '';
+        limit = page;
+        const url = new URL(location.href);
+        if (category) url.searchParams.set('c', category);
+        else url.searchParams.delete('c');
+        history.replaceState(null, '', url);
+        render(true);
+      })
+    );
+
+    more.addEventListener('click', () => {
+      const firstNew = items.filter((li) => !category || li.dataset.category === category)[limit];
+      limit += page;
+      render();
+      firstNew?.querySelector('a')?.focus();
+    });
+
+    if (filters) filters.hidden = false;
+    render();
+  });
+</script>
+
+<style>
+  .news-list {
+    padding-block: clamp(2.5rem, 5vw, 4rem) clamp(4rem, 8vw, 6rem);
+    background: var(--c-surface);
+  }
+
+  .news-list__intro {
+    max-width: 60ch;
+    font-size: 1.125rem;
+    color: var(--c-text-muted);
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.75rem;
+  }
+
+  .chip {
+    min-height: 40px;
+    padding: 0.4rem 1.1rem;
+    border: 1px solid var(--c-line);
+    border-radius: 999px;
+    background: #fff;
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-text);
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+
+  .chip:hover {
+    border-color: var(--c-primary);
+    color: var(--c-primary);
+  }
+
+  .chip[aria-pressed='true'] {
+    background: var(--c-primary);
+    border-color: var(--c-primary);
+    color: #fff;
+  }
+
+  .news-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .news-grid li[hidden] {
+    display: none;
+  }
+
+  .news-list__empty {
+    margin-top: 2rem;
+    color: var(--c-text-muted);
+  }
+
+  .news-list__more {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+
+  .news-list__more .btn[hidden] {
+    display: none;
+  }
+
+  @media (min-width: 720px) {
+    .news-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .news-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

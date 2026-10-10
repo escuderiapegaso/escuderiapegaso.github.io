@@ -1,0 +1,149 @@
+---
+/** Tarjeta de noticia: imagen, rótulo, fecha, título y entradilla. Toda la tarjeta es un enlace. */
+import { Image } from 'astro:assets';
+import type { Lang } from '../i18n/config';
+import { formatDate, imagePosition, newsKicker, newsPath, splitId, type NewsEntry } from '../data/news';
+
+interface Props {
+  lang: Lang;
+  entry: NewsEntry;
+  /** Muestra la entradilla (en el listado sí; en «Más noticias» no). */
+  excerpt?: boolean;
+  /** `dark` para fondos oscuros. */
+  tone?: 'light' | 'dark';
+}
+
+const { lang, entry, excerpt = true, tone = 'light' } = Astro.props;
+const { title, date, image, excerpt: summary } = entry.data;
+const href = newsPath(lang, splitId(entry).slug);
+---
+
+<article class:list={['news-card', `news-card--${tone}`]}>
+  <div class="news-card__media">
+    <Image
+      src={image}
+      alt=""
+      widths={[400, 640, 960].filter((w) => w < image.width).concat(Math.min(image.width, 1280))}
+      sizes="(min-width: 1100px) 400px, (min-width: 720px) 45vw, 92vw"
+      class="news-card__img"
+      style={`object-position: ${imagePosition(entry)}`}
+    />
+  </div>
+  <div class="news-card__body">
+    <p class="news-card__meta">
+      <span class="news-card__kicker">{newsKicker(entry, lang)}</span>
+      <time datetime={date.toISOString().slice(0, 10)}>{formatDate(date, lang)}</time>
+    </p>
+    <h3 class="news-card__title">
+      <a href={href}>{title}</a>
+    </h3>
+    {excerpt && <p class="news-card__excerpt">{summary}</p>}
+  </div>
+</article>
+
+<style>
+  .news-card {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+
+  .news-card:hover {
+    border-color: var(--c-primary);
+    box-shadow: 0 12px 30px rgba(13, 13, 15, 0.08);
+  }
+
+  .news-card--dark {
+    background: var(--c-ink-soft);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+
+  .news-card--dark:hover {
+    border-color: var(--c-primary-light);
+    box-shadow: none;
+  }
+
+  .news-card__media {
+    overflow: hidden;
+    background: var(--c-ink);
+  }
+
+  .news-card__media :global(.news-card__img) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease);
+  }
+
+  .news-card:hover :global(.news-card__img) {
+    transform: scale(1.04);
+  }
+
+  .news-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.25rem 1.4rem 1.5rem;
+  }
+
+  .news-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+  }
+
+  .news-card--dark .news-card__meta {
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  .news-card__kicker {
+    color: var(--c-primary);
+  }
+
+  .news-card--dark .news-card__kicker {
+    color: var(--c-primary-light);
+  }
+
+  .news-card__title {
+    font-size: 1.1875rem;
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+
+  /* El enlace del título cubre toda la tarjeta */
+  .news-card__title a {
+    text-decoration: none;
+  }
+
+  .news-card__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .news-card__title a:focus-visible {
+    outline: none;
+  }
+
+  .news-card:has(a:focus-visible) {
+    outline: 2px solid var(--c-primary);
+    outline-offset: 3px;
+  }
+
+  .news-card__excerpt {
+    font-size: 0.9875rem;
+    line-height: 1.55;
+    color: var(--c-text-muted);
+  }
+</style>

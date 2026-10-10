@@ -1,0 +1,127 @@
+# Panel de administración (Sveltia CMS) · https://escuderiapegaso.github.io/admin/
+# Cada vez que guardas, el panel crea un commit en GitHub y la web se publica sola.
+# Documentación: https://sveltiacms.app/en/docs
+
+backend:
+  name: github
+  repo: escuderiapegaso/escuderiapegaso.github.io
+  branch: main
+  commit_messages:
+    create: 'Nueva noticia: {{slug}}'
+    update: 'Actualiza noticia: {{slug}}'
+    delete: 'Borra noticia: {{slug}}'
+    uploadMedia: 'Sube imagen: {{path}}'
+    deleteMedia: 'Borra imagen: {{path}}'
+
+site_url: https://escuderiapegaso.github.io
+display_url: https://escuderiapegaso.github.io
+
+# Imágenes: se guardan en src/assets/news y Astro las optimiza al publicar.
+media_folder: /src/assets/news
+public_folder: /src/assets/news
+media_libraries:
+  default:
+    config:
+      # Reduce las fotos grandes al subirlas para no llenar el repositorio
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 2560
+          height: 2560
+
+i18n:
+  structure: multiple_folders
+  locales: [es, en, ca]
+  default_locale: es
+
+collections:
+  - name: news
+    label: Noticias
+    label_singular: Noticia
+    folder: /src/content/news
+    extension: md
+    format: frontmatter
+    create: true
+    i18n: true
+    slug: '{{slug}}'
+    identifier_field: title
+    summary: '{{title}}'
+    sortable_fields: [date, title]
+    fields:
+      - name: title
+        label: Título
+        widget: string
+        i18n: true
+
+      - name: date
+        label: Fecha de publicación
+        widget: datetime
+        time_format: false
+        date_format: DD/MM/YYYY
+        format: YYYY-MM-DD
+        default: '{{now}}'
+        i18n: duplicate
+
+      - name: category
+        label: Categoría
+        widget: select
+        i18n: duplicate
+        options:
+          - { label: Equipo, value: team }
+          - { label: El coche, value: car }
+          - { label: Carreras, value: races }
+          - { label: Desarrollo de pilotos, value: ddp }
+          - { label: Open Series, value: open-series }
+          - { label: Patrocinadores, value: sponsors }
+
+      - name: tag
+        label: Rótulo (opcional)
+        hint: 'Texto pequeño sobre el título, p. ej. «Gran Premio de Singapur». Si lo dejas vacío, se muestra la categoría.'
+        widget: string
+        required: false
+        i18n: true
+
+      - name: excerpt
+        label: Entradilla
+        hint: Una o dos frases que resumen la noticia. Sale en las tarjetas y al compartir.
+        widget: text
+        i18n: true
+
+      - name: image
+        label: Imagen principal
+        hint: 'Horizontal (16:9) y de al menos 1920 px de ancho.'
+        widget: image
+        i18n: duplicate
+
+      - name: imageAlt
+        label: Descripción de la imagen
+        hint: Qué se ve en la foto, para personas que usan lector de pantalla.
+        widget: string
+        i18n: true
+
+      - name: imagePosition
+        label: Encuadre de la imagen
+        hint: Qué parte de la foto se conserva cuando se recorta.
+        widget: select
+        required: false
+        default: '50% 50%'
+        i18n: duplicate
+        options:
+          - { label: Centro, value: '50% 50%' }
+          - { label: Izquierda, value: '20% 50%' }
+          - { label: Derecha, value: '80% 50%' }
+          - { label: Arriba, value: '50% 20%' }
+          - { label: Abajo, value: '50% 80%' }
+
+      - name: draft
+        label: Borrador (no publicar)
+        widget: boolean
+        default: false
+        required: false
+        i18n: duplicate
+
+      - name: body
+        label: Texto
+        widget: richtext
+        i18n: true

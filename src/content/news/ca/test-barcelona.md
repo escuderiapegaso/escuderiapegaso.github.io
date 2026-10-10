@@ -1,11 +1,13 @@
 ---
 title: El Pegaso 268 roda per primera vegada a Barcelona
 date: 2026-10-07
+category: car
 tag: Pretemporada
 excerpt: El nou monoplaça de l'Escudería Pegaso completa el seu primer dia de proves al Circuit de Barcelona-Catalunya.
-image: ../../../assets/photos/pegaso-268-barcelona-test.jpg
+image: /src/assets/news/pegaso-268-barcelona-test.jpg
 imageAlt: El Pegaso 268 al Circuit de Barcelona-Catalunya
 imagePosition: 55% 50%
+draft: false
 ---
 
 *Notícia d'exemple. Substitueix-la per la teva.*
