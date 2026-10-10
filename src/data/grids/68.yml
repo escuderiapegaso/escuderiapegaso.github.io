@@ -24,11 +24,11 @@ drivers:
     name: José Reckziegel
     country: BR
     number: 2
-    team: pegaso
+    team: red-bull
     helmet: /src/assets/helmets/josereckziegel-helmet.webp
   - id: philippe-saintgermain-iii
     name: Philippe de Saint-Germain III
     country: FR
     number: 1
-    team: pegaso
+    team: red-bull
     helmet: /src/assets/helmets/saintgermain-helmet.webp
