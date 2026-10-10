@@ -10,8 +10,9 @@
  * Las imágenes van en src/assets/news/ y se citan como /src/assets/news/foto.jpg.
  */
 import { defineCollection, z } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { file, glob } from 'astro/loaders';
 import { newsCategories } from './data/newsCategories';
+import { weatherTypes } from './data/weather';
 
 /** Texto opcional: un campo vacío se trata como si no existiera. */
 const optionalText = z
@@ -42,4 +43,102 @@ const news = defineCollection({
     }),
 });
 
-export const collections = { news };
+/* ---------- Carreras ---------- */
+
+/** Número opcional: vacío = sin dato. */
+const optionalNumber = z.number().nullish().transform((v) => v ?? undefined);
+
+const record = z
+  .object({
+    time: optionalText,
+    driver: optionalText,
+    team: optionalText,
+    season: optionalNumber,
+  })
+  .nullish()
+  .transform((r) => (r && r.time ? r : undefined));
+
+/** Datos fijos de cada circuito: src/data/circuits.yml */
+const circuits = defineCollection({
+  loader: file('src/data/circuits.yml'),
+  schema: z.object({
+    city: optionalText,
+    length: optionalNumber,
+    laps: optionalNumber,
+    qualiRecord: record,
+    raceRecord: record,
+  }),
+});
+
+/** Parrilla de cada temporada: src/data/grids/<temporada>.yml */
+const grids = defineCollection({
+  loader: glob({ pattern: '*.yml', base: './src/data/grids' }),
+  schema: z.object({
+    teams: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        color: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'El color debe ir así: \'#a50034\''),
+        emblem: optionalText,
+      })
+    ),
+    drivers: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        country: optionalText,
+        number: optionalNumber,
+        team: z.string(),
+        helmet: optionalText,
+      })
+    ),
+  }),
+});
+
+const weather = z
+  .object({ type: z.enum(weatherTypes), chance: z.number().min(0).max(100).nullish() })
+  .nullish()
+  .transform((w) => w ?? undefined);
+
+/** Tiempo como texto ('1:18.456', '+5.321'); se aceptan también números. */
+const timeText = z
+  .union([z.string(), z.number()])
+  .nullish()
+  .transform((v) => (v === null || v === undefined || v === '' ? undefined : String(v).trim()));
+
+/** Resultados de cada GP: src/data/results/<temporada>/<circuito>.yml */
+const results = defineCollection({
+  loader: glob({ pattern: '*/*.yml', base: './src/data/results' }),
+  schema: z.object({
+    qualifying: z
+      .object({
+        weather,
+        results: z
+          .array(z.object({ driver: z.string(), time: timeText }))
+          .nullish()
+          .transform((v) => v ?? []),
+      })
+      .nullish()
+      .transform((v) => v ?? { weather: undefined, results: [] }),
+    race: z
+      .object({
+        weather,
+        fastestLap: optionalText,
+        results: z
+          .array(
+            z.object({
+              driver: z.string(),
+              laps: optionalNumber,
+              time: timeText,
+              dnf: z.boolean().nullish().transform((v) => v ?? false),
+            })
+          )
+          .nullish()
+          .transform((v) => v ?? []),
+      })
+      .nullish()
+      .transform((v) => v ?? { weather: undefined, fastestLap: undefined, results: [] }),
+  }),
+});
+
+export const collections = { news, circuits, grids, results };

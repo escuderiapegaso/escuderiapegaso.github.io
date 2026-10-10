@@ -1,0 +1,45 @@
+---
+/** Emblema del equipo. Si no hay imagen, la inicial sobre su color. */
+import { Image } from 'astro:assets';
+import { emblemImage, type Team } from '../data/races';
+
+interface Props {
+  team: Team;
+  size?: number;
+}
+
+const { team, size = 24 } = Astro.props;
+const img = emblemImage(team);
+
+// Texto blanco o negro según lo claro que sea el color del equipo
+const [r, g, b] = [1, 3, 5].map((i) => parseInt(team.color.slice(i, i + 2), 16));
+const ink = (r * 299 + g * 587 + b * 114) / 1000 > 150 ? '#0d0d0f' : '#fff';
+---
+
+{
+  img ? (
+    <Image src={img} alt="" width={size} height={size} densities={[1, 2]} class="emblem" />
+  ) : (
+    <span class="emblem emblem--fallback" style={`background:${team.color};color:${ink}`} aria-hidden="true">
+      {team.name.replace(/^(escuder[ií]a|scuderia|team)\s+/i, '').charAt(0)}
+    </span>
+  )
+}
+
+<style>
+  .emblem {
+    flex-shrink: 0;
+    width: var(--emblem-size, 24px);
+    height: var(--emblem-size, 24px);
+    object-fit: contain;
+  }
+
+  .emblem--fallback {
+    display: inline-grid;
+    place-items: center;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+</style>

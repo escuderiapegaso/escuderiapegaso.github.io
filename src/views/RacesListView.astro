@@ -1,0 +1,329 @@
+---
+/**
+ * Página general de Carreras: los Grandes Premios de la temporada en una
+ * lista vertical. Los ya disputados (con resultados) se marcan y muestran
+ * al ganador; la próxima carrera se marca en el navegador según la hora.
+ */
+import { Image } from 'astro:assets';
+import PageHeader from '../components/PageHeader.astro';
+import CircleArrow from '../components/CircleArrow.astro';
+import Flag from '../components/Flag.astro';
+import Helmet from '../components/Helmet.astro';
+import type { Lang } from '../i18n/config';
+import { useTranslations, fill } from '../i18n/ui';
+import { season } from '../data/team';
+import { circuitImage, formatWeekend } from '../data/calendar';
+import { getCircuit, getGrid, getSeasonResults, raceRows, racePath, countryName } from '../data/races';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const grid = await getGrid();
+const items = await Promise.all(
+  (await getSeasonResults()).map(async ({ race, results }) => {
+    const rows = results ? raceRows(results, grid, `Resultados de ${race.circuit}`) : [];
+    return { race, circuit: await getCircuit(race), winner: rows.find((r) => r.pos === 1) };
+  })
+);
+---
+
+<PageHeader title={t.pages.races} kicker={`${t.common.season} ${season.number}`} />
+
+<section class="races">
+  <div class="container">
+    <p class="races__intro">{fill(t.races.intro, { n: items.length, season: season.number })}</p>
+
+    <ol class="race-list" role="list" data-race-list>
+      {
+        items.map(({ race, circuit, winner }) => (
+          <li
+            class:list={['race-item', { 'is-done': !!winner }]}
+            data-race-start={race.raceStart}
+            data-done={winner ? '' : undefined}
+          >
+            <a class="race-item__link" href={racePath(lang, race)}>
+              <span class="race-item__round">
+                <span class="race-item__round-label">{fill(t.calendar.round, { n: '' }).trim()}</span>
+                <span class="race-item__round-num display">{String(race.round).padStart(2, '0')}</span>
+              </span>
+
+              <span class="race-item__map">
+                <Image src={circuitImage(race)} alt="" widths={[160, 320]} sizes="160px" class="race-item__img" />
+              </span>
+
+              <span class="race-item__info">
+                <span class="race-item__date">{formatWeekend(race, lang)}</span>
+                <span class="race-item__name">
+                  <Flag code={race.country} />
+                  <span>{race.name[lang]}</span>
+                </span>
+                <span class="race-item__circuit">
+                  {race.circuitName}
+                  {circuit?.city && <> · {circuit.city}</>}, {countryName(race.country, lang)}
+                </span>
+              </span>
+
+              <span class="race-item__status">
+                {winner ? (
+                  <>
+                    <span class="badge badge--done">
+                      <svg viewBox="0 0 12 12" aria-hidden="true">
+                        <path d="M2.5 6.2 5 8.6l4.6-5" fill="none" stroke="currentColor" stroke-width="1.8" />
+                      </svg>
+                      {t.races.done}
+                    </span>
+                    <span class="race-item__winner">
+                      <span class="visually-hidden">{t.races.winner}: </span>
+                      <Helmet driver={winner.driver} team={winner.team} size={22} />
+                      {winner.driver.name}
+                    </span>
+                  </>
+                ) : (
+                  <span class="badge badge--next" data-next-badge hidden>
+                    {t.races.next}
+                  </span>
+                )}
+              </span>
+
+              <span class="race-item__arrow">
+                <CircleArrow />
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<script>
+  // Marca la próxima carrera aún no disputada según la hora del visitante
+  document.querySelectorAll<HTMLElement>('[data-race-list]').forEach((list) => {
+    const now = Date.now();
+    const next = [...list.querySelectorAll<HTMLElement>('[data-race-start]')].find(
+      (li) => !li.hasAttribute('data-done') && new Date(li.dataset.raceStart!).getTime() > now
+    );
+    if (!next) return;
+    next.classList.add('is-next');
+    next.querySelector<HTMLElement>('[data-next-badge]')?.removeAttribute('hidden');
+  });
+</script>
+
+<style>
+  .races {
+    padding-block: clamp(2.5rem, 5vw, 4rem) clamp(4rem, 8vw, 6rem);
+    background: var(--c-surface);
+  }
+
+  .races__intro {
+    max-width: 60ch;
+    font-size: 1.125rem;
+    color: var(--c-text-muted);
+  }
+
+  .race-list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .race-item__link {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 96px 1fr;
+    grid-template-areas:
+      'round map info'
+      'round map status';
+    align-items: center;
+    gap: 0.35rem 1rem;
+    padding: 0.85rem 1rem;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-left: 4px solid var(--c-line);
+    text-decoration: none;
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+
+  .race-item__link:hover {
+    border-color: var(--c-primary);
+    box-shadow: 0 10px 26px rgba(13, 13, 15, 0.07);
+  }
+
+  .is-done .race-item__link {
+    border-left-color: var(--c-ink);
+  }
+
+  .is-next .race-item__link {
+    border-color: var(--c-primary);
+    border-left-color: var(--c-primary);
+    box-shadow: 0 10px 26px rgba(165, 0, 52, 0.1);
+  }
+
+  .race-item__round {
+    grid-area: round;
+    display: grid;
+    justify-items: center;
+    min-width: 3.25rem;
+  }
+
+  .race-item__round-label {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+  }
+
+  .race-item__round-num {
+    font-size: 1.5rem;
+    line-height: 1.1;
+  }
+
+  .is-next .race-item__round-num {
+    color: var(--c-primary);
+  }
+
+  .race-item__map {
+    grid-area: map;
+    display: block;
+    overflow: hidden;
+    background: var(--c-ink);
+  }
+
+  .race-item__map :global(.race-item__img) {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  /* Ya disputadas: mapa en gris */
+  .is-done .race-item__map :global(.race-item__img) {
+    filter: grayscale(1);
+    opacity: 0.75;
+  }
+
+  .race-item__info {
+    grid-area: info;
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .race-item__date {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+  }
+
+  .race-item__name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .race-item__name :global(svg.flag) {
+    flex-shrink: 0;
+  }
+
+  .race-item__circuit {
+    font-size: 0.875rem;
+    color: var(--c-text-muted);
+  }
+
+  .race-item__status {
+    grid-area: status;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.9rem;
+  }
+
+  .race-item__status:empty {
+    display: none;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .badge svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  .badge--done {
+    background: var(--c-ink);
+    color: #fff;
+  }
+
+  .badge--next {
+    background: var(--c-primary);
+    color: #fff;
+  }
+
+  .badge[hidden] {
+    display: none;
+  }
+
+  .race-item__winner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .race-item__arrow {
+    display: none;
+    color: var(--c-ink);
+  }
+
+  .race-item__link:hover .race-item__arrow :global(.circle-arrow) {
+    background: var(--c-primary);
+    border-color: var(--c-primary);
+    color: #fff;
+  }
+
+  @media (min-width: 760px) {
+    .race-item__link {
+      grid-template-columns: 4rem 150px minmax(0, 1fr) minmax(12rem, auto) auto;
+      grid-template-areas: 'round map info status arrow';
+      gap: 1.5rem;
+      padding: 1rem 1.5rem 1rem 1rem;
+    }
+
+    .race-item__status {
+      justify-content: flex-end;
+    }
+
+    .race-item__status:empty {
+      display: flex;
+    }
+
+    .race-item__arrow {
+      grid-area: arrow;
+      display: block;
+    }
+
+    .race-item__name {
+      font-size: 1.25rem;
+    }
+  }
+</style>

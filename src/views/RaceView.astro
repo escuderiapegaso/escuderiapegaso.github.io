@@ -1,0 +1,731 @@
+---
+/**
+ * Ficha de un Gran Premio: datos del circuito, mapa, clima, resumen de la
+ * Escudería Pegaso y resultados de clasificación y carrera.
+ */
+import { Image } from 'astro:assets';
+import CircleArrow from '../components/CircleArrow.astro';
+import Flag from '../components/Flag.astro';
+import Helmet from '../components/Helmet.astro';
+import ResultsTable from '../components/ResultsTable.astro';
+import type { Lang } from '../i18n/config';
+import { getPath } from '../i18n/routes';
+import { useTranslations, fill } from '../i18n/ui';
+import { season } from '../data/team';
+import { races, circuitImage, formatWeekend } from '../data/calendar';
+import { weatherIcon, weatherLabels } from '../data/weather';
+import {
+  getCircuit,
+  getGrid,
+  getResults,
+  qualifyingRows,
+  raceRows,
+  racePath,
+  countryName,
+  OWN_TEAM,
+} from '../data/races';
+
+interface Props {
+  lang: Lang;
+  index: number;
+}
+
+const { lang, index } = Astro.props;
+const t = useTranslations(lang);
+const race = races[index];
+const prev = races[index - 1];
+const next = races[index + 1];
+
+const circuit = await getCircuit(race);
+const grid = await getGrid();
+const results = await getResults(race);
+const where = `src/data/results/${season.number}/${race.circuit}.yml`;
+const quali = qualifyingRows(results, grid, where);
+const raceRes = raceRows(results, grid, where);
+const finished = raceRes.length > 0;
+
+const locale = { es: 'es-ES', en: 'en-GB', ca: 'ca-ES' }[lang];
+const num = (n: number, digits = 3) =>
+  new Intl.NumberFormat(locale, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(n);
+
+const length = circuit?.length;
+const laps = circuit?.laps;
+const distance = length && laps ? length * laps : undefined;
+
+const facts = [
+  { label: t.races.length, value: length ? `${num(length)} km` : undefined },
+  { label: t.races.laps, value: laps ? String(laps) : undefined },
+  { label: t.races.distance, value: distance ? `${num(distance)} km` : undefined },
+];
+
+const records = [
+  { label: t.races.qualiRecord, rec: circuit?.qualiRecord },
+  { label: t.races.raceRecord, rec: circuit?.raceRecord },
+];
+
+const sessions = [
+  { label: t.races.qualifying, weather: results.qualifying.weather },
+  { label: t.races.race, weather: results.race.weather },
+];
+
+// Resumen de nuestros pilotos
+const ownDrivers = [...grid.drivers.values()].filter((d) => d.team === OWN_TEAM);
+const ownTeam = grid.teams.get(OWN_TEAM)!;
+const summary = ownDrivers.map((d) => ({
+  driver: d,
+  quali: quali.find((r) => r.driver.id === d.id),
+  race: raceRes.find((r) => r.driver.id === d.id),
+}));
+const posText = (r?: { pos?: number; dnf?: boolean }) => (r ? (r.dnf ? t.races.dnf : `P${r.pos}`) : '—');
+
+const unitKeys = ['d', 'h', 'm', 's'] as const;
+---
+
+<section class="gp-hero">
+  <div class="container gp-hero__inner">
+    <div>
+      <p class="kicker gp-hero__kicker">
+        {fill(t.calendar.round, { n: race.round })} · {formatWeekend(race, lang)}
+      </p>
+      <h1 class="gp-hero__title display">
+        <Flag code={race.country} />
+        <span>{race.name[lang]}</span>
+      </h1>
+      <p class="gp-hero__circuit">{race.circuitName}</p>
+    </div>
+
+    <div class="gp-hero__status">
+      {
+        finished ? (
+          <span class="status-badge">{t.races.finished}</span>
+        ) : (
+          <div class="countdown" data-countdown={race.raceStart}>
+            <p class="countdown__label" data-countdown-label>{t.races.startsIn}</p>
+            <div class="countdown__box" role="timer">
+              {unitKeys.map((u, i) => (
+                <>
+                  {i > 0 && <span class="countdown__sep" aria-hidden="true">:</span>}
+                  <span class="countdown__unit">
+                    <span class="countdown__value" data-unit={u}>--</span>
+                    <span class="countdown__name" aria-hidden="true">{t.calendar.units[u]}</span>
+                    <span class="visually-hidden">{t.calendar.unitsLong[u]}</span>
+                  </span>
+                </>
+              ))}
+            </div>
+            <p class="countdown__pending" data-countdown-pending hidden>{t.races.noResults}</p>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<section class="gp-info">
+  <div class="container">
+    <dl class="facts">
+      <div class="fact">
+        <dt>{t.races.location}</dt>
+        <dd>
+          {circuit?.city && <>{circuit.city}, </>}
+          {countryName(race.country, lang)}
+        </dd>
+      </div>
+      {
+        facts.map((f) => (
+          <div class="fact">
+            <dt>{f.label}</dt>
+            <dd>{f.value ?? '—'}</dd>
+          </div>
+        ))
+      }
+      {
+        records.map(({ label, rec }) => (
+          <div class="fact fact--record">
+            <dt>{label}</dt>
+            <dd>
+              {rec ? (
+                <>
+                  <span class="record-time">{rec.time}</span>
+                  <span class="record-who">
+                    {[rec.driver, rec.team].filter(Boolean).join(' · ')}
+                    {rec.season && ` · ${t.common.season} ${rec.season}`}
+                  </span>
+                </>
+              ) : (
+                '—'
+              )}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="gp-media">
+      <figure class="gp-map">
+        <Image
+          src={circuitImage(race)}
+          alt={`${t.races.map}: ${race.circuitName}`}
+          widths={[400, 600]}
+          sizes="(min-width: 900px) 600px, 92vw"
+        />
+        <figcaption>{race.circuitName}</figcaption>
+      </figure>
+
+      <div class="gp-weather">
+        <h2 class="gp-sub">{t.races.weather}</h2>
+        <ul class="weather-list" role="list">
+          {
+            sessions.map(({ label, weather }) => (
+              <li class="weather">
+                <p class="weather__session">{label}</p>
+                {weather ? (
+                  <>
+                    <Image src={weatherIcon(weather.type)} alt="" width={72} height={72} densities={[1, 2]} class="weather__icon" />
+                    <p class="weather__type">{weatherLabels[weather.type][lang]}</p>
+                    {weather.chance !== undefined && weather.chance !== null && (
+                      <p class="weather__chance">
+                        {t.races.chance}: <strong>{weather.chance} %</strong>
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <p class="weather__pending">{t.races.pending}</p>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gp-own" aria-labelledby="own-title">
+  <div class="container">
+    <h2 id="own-title" class="gp-sub">{t.races.ownTitle}</h2>
+    <ul class="own-list" role="list">
+      {
+        summary.map(({ driver, quali: q, race: r }) => (
+          <li class="own">
+            <span class="own__driver">
+              <Helmet driver={driver} team={ownTeam} size={40} />
+              <span>
+                <span class="own__name">{driver.name}</span>
+                {driver.number !== undefined && <span class="own__num">#{driver.number}</span>}
+              </span>
+            </span>
+            <dl class="own__stats">
+              <div>
+                <dt>{t.races.qualifying}</dt>
+                <dd>{posText(q)}</dd>
+              </div>
+              <div>
+                <dt>{t.races.race}</dt>
+                <dd>{posText(r)}</dd>
+              </div>
+              <div>
+                <dt>{t.races.cols.points}</dt>
+                <dd>{r ? (r.points ?? 0) : '—'}</dd>
+              </div>
+            </dl>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<section class="gp-results">
+  <div class="container gp-results__inner">
+    <section aria-labelledby="quali-title">
+      <h2 id="quali-title" class="section-title">{t.races.qualifying}</h2>
+      {
+        quali.length ? (
+          <ResultsTable lang={lang} rows={quali} kind="qualifying" caption={`${t.races.qualifying} · ${race.name[lang]}`} />
+        ) : (
+          <p class="no-results">{t.races.noResults}</p>
+        )
+      }
+    </section>
+
+    <section aria-labelledby="race-title">
+      <h2 id="race-title" class="section-title">{t.races.race}</h2>
+      {
+        raceRes.length ? (
+          <ResultsTable lang={lang} rows={raceRes} kind="race" caption={`${t.races.race} · ${race.name[lang]}`} />
+        ) : (
+          <p class="no-results">{t.races.noResults}</p>
+        )
+      }
+    </section>
+  </div>
+</section>
+
+<nav class="gp-nav" aria-label={t.races.allRaces}>
+  <div class="container gp-nav__inner">
+    {
+      prev ? (
+        <a class="gp-nav__link" href={racePath(lang, prev)}>
+          <CircleArrow dir="left" />
+          <span>
+            <span class="gp-nav__label">{t.races.prevRace}</span>
+            <span class="gp-nav__name">{prev.name[lang]}</span>
+          </span>
+        </a>
+      ) : (
+        <span />
+      )
+    }
+    <a class="gp-nav__all" href={getPath(lang, 'races')}>{t.races.allRaces}</a>
+    {
+      next ? (
+        <a class="gp-nav__link gp-nav__link--next" href={racePath(lang, next)}>
+          <span>
+            <span class="gp-nav__label">{t.races.nextRace}</span>
+            <span class="gp-nav__name">{next.name[lang]}</span>
+          </span>
+          <CircleArrow />
+        </a>
+      ) : (
+        <span />
+      )
+    }
+  </div>
+</nav>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-countdown]').forEach((root) => {
+    const start = new Date(root.dataset.countdown!).getTime();
+    const values = Object.fromEntries(
+      [...root.querySelectorAll<HTMLElement>('[data-unit]')].map((el) => [el.dataset.unit!, el])
+    );
+    const pad = (n: number) => String(n).padStart(2, '0');
+    let timer = 0;
+    function tick() {
+      let diff = Math.floor((start - Date.now()) / 1000);
+      if (diff <= 0) {
+        // Ya empezó, pero aún no hay resultados
+        root.querySelector('[role="timer"]')?.setAttribute('hidden', '');
+        root.querySelector('[data-countdown-label]')?.setAttribute('hidden', '');
+        root.querySelector('[data-countdown-pending]')?.removeAttribute('hidden');
+        window.clearInterval(timer);
+        return;
+      }
+      const d = Math.floor(diff / 86400);
+      diff -= d * 86400;
+      const h = Math.floor(diff / 3600);
+      diff -= h * 3600;
+      const m = Math.floor(diff / 60);
+      values.d.textContent = pad(d);
+      values.h.textContent = pad(h);
+      values.m.textContent = pad(m);
+      values.s.textContent = pad(diff - m * 60);
+    }
+    tick();
+    timer = window.setInterval(tick, 1000);
+  });
+</script>
+
+<style>
+  /* ---------- Cabecera ---------- */
+  .gp-hero {
+    padding-block: clamp(2.75rem, 6vw, 4.5rem);
+    background: linear-gradient(115deg, var(--c-ink) 0%, var(--c-ink) 60%, var(--c-primary-dark) 60.1%, var(--c-primary) 100%);
+    color: #fff;
+  }
+
+  .gp-hero__inner {
+    display: grid;
+    gap: 1.75rem;
+    align-items: end;
+  }
+
+  .gp-hero__kicker {
+    color: var(--c-silver);
+  }
+
+  .gp-hero__title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    font-size: clamp(1.625rem, 1rem + 3vw, 3.25rem);
+    line-height: 1.1;
+  }
+
+  .gp-hero__title :global(svg.flag) {
+    flex-shrink: 0;
+    width: 1.1em;
+  }
+
+  .gp-hero__circuit {
+    margin-top: 0.5rem;
+    font-size: 1.0625rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.5rem 1.1rem;
+    background: #fff;
+    color: var(--c-ink);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .countdown__label,
+  .countdown__pending {
+    margin-bottom: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .countdown__box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.35rem;
+    width: max-content;
+    padding: 0.45rem 1.4rem 0.35rem;
+    background: #fff;
+    color: var(--c-ink);
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  }
+
+  .countdown__box[hidden],
+  .countdown__label[hidden],
+  .countdown__pending[hidden] {
+    display: none;
+  }
+
+  .countdown__unit {
+    display: grid;
+    justify-items: center;
+    min-width: 2.4ch;
+  }
+
+  .countdown__value,
+  .countdown__sep {
+    font-family: var(--f-display);
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.625rem);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .countdown__name {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--c-text-muted);
+  }
+
+  @media (min-width: 900px) {
+    .gp-hero__inner {
+      grid-template-columns: 1fr auto;
+    }
+  }
+
+  /* ---------- Datos, mapa y clima ---------- */
+  .gp-info {
+    padding-block: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    margin: 0;
+    background: var(--c-line);
+    border: 1px solid var(--c-line);
+  }
+
+  .fact {
+    padding: 1.1rem 1.25rem;
+    background: #fff;
+  }
+
+  .fact dt,
+  .gp-sub,
+  .weather__session,
+  .own__stats dt {
+    margin-bottom: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+  }
+
+  .fact dd {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .fact--record {
+    grid-column: span 2;
+  }
+
+  .record-time {
+    display: block;
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .record-who {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--c-text-muted);
+  }
+
+  @media (min-width: 720px) {
+    .facts {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .facts {
+      grid-template-columns: repeat(4, 1fr) 1.4fr 1.4fr;
+    }
+    .fact--record {
+      grid-column: auto;
+    }
+  }
+
+  .gp-media {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .gp-map {
+    margin: 0;
+    background: var(--c-ink);
+  }
+
+  .gp-map :global(img) {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  .gp-map figcaption {
+    padding: 0.6rem 1rem;
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .gp-weather {
+    padding: 1.5rem;
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+  }
+
+  .weather-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .weather {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 0.35rem;
+    padding: 1.25rem 1rem;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    text-align: center;
+  }
+
+  .weather :global(.weather__icon) {
+    width: 72px;
+    height: 72px;
+  }
+
+  .weather__type {
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .weather__chance {
+    font-size: 0.9375rem;
+    color: var(--c-text-muted);
+  }
+
+  .weather__chance strong {
+    color: var(--c-text);
+  }
+
+  .weather__pending {
+    margin-top: 0.5rem;
+    color: var(--c-text-muted);
+  }
+
+  @media (min-width: 900px) {
+    .gp-media {
+      grid-template-columns: 1.4fr 1fr;
+      align-items: start;
+    }
+  }
+
+  /* ---------- Resumen Pegaso ---------- */
+  .gp-own {
+    padding-block: 0 clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .own-list {
+    display: grid;
+    gap: 1rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .own {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    padding: 1.1rem 1.4rem;
+    background: #fff6b3;
+    border-left: 4px solid var(--c-chev-yellow);
+  }
+
+  .own__driver {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    --helmet-size: 40px;
+  }
+
+  .own__name {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  .own__num {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--c-text-muted);
+  }
+
+  .own__stats {
+    display: flex;
+    gap: 1.75rem;
+    margin: 0;
+  }
+
+  .own__stats dt {
+    margin-bottom: 0.1rem;
+    color: #5a5300;
+  }
+
+  .own__stats dd {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: 1.25rem;
+  }
+
+  @media (min-width: 900px) {
+    .own-list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* ---------- Resultados ---------- */
+  .gp-results {
+    padding-block: clamp(2.5rem, 5vw, 3.5rem) clamp(3.5rem, 7vw, 5rem);
+    background: var(--c-surface);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .gp-results__inner {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .gp-results .section-title {
+    margin-bottom: 1.25rem;
+  }
+
+  .no-results {
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px dashed var(--c-silver);
+    color: var(--c-text-muted);
+  }
+
+  /* ---------- Anterior / siguiente ---------- */
+  .gp-nav {
+    background: var(--c-ink);
+    color: #fff;
+  }
+
+  .gp-nav__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding-block: 1.75rem;
+  }
+
+  .gp-nav__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    text-decoration: none;
+  }
+
+  .gp-nav__link--next {
+    justify-self: end;
+    text-align: right;
+  }
+
+  .gp-nav__label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  .gp-nav__name {
+    display: block;
+    font-weight: 600;
+  }
+
+  .gp-nav__all {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-underline-offset: 0.3em;
+  }
+
+  @media (min-width: 720px) {
+    .gp-nav__inner {
+      grid-template-columns: 1fr auto 1fr;
+    }
+    .gp-nav__all {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+</style>

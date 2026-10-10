@@ -40,6 +40,37 @@ interface UIStrings {
   };
   article: { back: string; published: string; more: string; viewAll: string };
   newsList: { intro: string; filter: string; all: string; loadMore: string; empty: string; results: string };
+  races: {
+    intro: string;
+    done: string;
+    next: string;
+    winner: string;
+    location: string;
+    length: string;
+    laps: string;
+    distance: string;
+    qualiRecord: string;
+    raceRecord: string;
+    map: string;
+    weather: string;
+    chance: string;
+    qualifying: string;
+    race: string;
+    pending: string;
+    noResults: string;
+    startsIn: string;
+    finished: string;
+    ownTitle: string;
+    allRaces: string;
+    prevRace: string;
+    nextRace: string;
+    cols: { pos: string; driver: string; team: string; time: string; gap: string; laps: string; points: string };
+    lapDown: string;
+    lapsDown: string;
+    dnf: string;
+    fastestLap: string;
+    ownDriver: string;
+  };
   footer: { partners: string; teamSponsor: string; powerUnit: string; explore: string; disclaimer: string };
   comingSoon: { title: string; text: string; back: string };
   notFound: { title: string; text: string };
@@ -112,6 +143,37 @@ export const ui: Record<Lang, UIStrings> = {
       loadMore: 'Ver más noticias',
       empty: 'Todavía no hay noticias en esta categoría.',
       results: '{n} noticias',
+    },
+    races: {
+      intro: 'Los {n} Grandes Premios de la temporada {season}, con la clasificación y la carrera de cada uno.',
+      done: 'Disputada',
+      next: 'Próxima',
+      winner: 'Ganador',
+      location: 'Ubicación',
+      length: 'Longitud',
+      laps: 'Vueltas',
+      distance: 'Distancia',
+      qualiRecord: 'Récord de clasificación',
+      raceRecord: 'Récord de carrera',
+      map: 'Circuito',
+      weather: 'Previsión meteorológica',
+      chance: 'Probabilidad',
+      qualifying: 'Clasificación',
+      race: 'Carrera',
+      pending: 'Pendiente',
+      noResults: 'Resultados disponibles tras la sesión.',
+      startsIn: 'La carrera empieza en',
+      finished: 'Finalizada',
+      ownTitle: 'Escudería Pegaso en este Gran Premio',
+      allRaces: 'Todas las carreras',
+      prevRace: 'Gran Premio anterior',
+      nextRace: 'Gran Premio siguiente',
+      cols: { pos: 'Pos.', driver: 'Piloto', team: 'Equipo', time: 'Tiempo', gap: 'Diferencia', laps: 'Vueltas', points: 'Puntos' },
+      lapDown: '+1 vuelta',
+      lapsDown: '+{n} vueltas',
+      dnf: 'DNF',
+      fastestLap: 'Vuelta rápida',
+      ownDriver: 'Piloto de la Escudería Pegaso',
     },
     footer: {
       partners: 'Socios oficiales',
@@ -196,6 +258,37 @@ export const ui: Record<Lang, UIStrings> = {
       empty: 'There is no news in this category yet.',
       results: '{n} stories',
     },
+    races: {
+      intro: 'All {n} Grands Prix of season {season}, with qualifying and race results for each one.',
+      done: 'Completed',
+      next: 'Next',
+      winner: 'Winner',
+      location: 'Location',
+      length: 'Lap length',
+      laps: 'Laps',
+      distance: 'Race distance',
+      qualiRecord: 'Qualifying record',
+      raceRecord: 'Race record',
+      map: 'Circuit',
+      weather: 'Weather forecast',
+      chance: 'Chance',
+      qualifying: 'Qualifying',
+      race: 'Race',
+      pending: 'Pending',
+      noResults: 'Results available after the session.',
+      startsIn: 'Race starts in',
+      finished: 'Finished',
+      ownTitle: 'Escudería Pegaso at this Grand Prix',
+      allRaces: 'All races',
+      prevRace: 'Previous Grand Prix',
+      nextRace: 'Next Grand Prix',
+      cols: { pos: 'Pos.', driver: 'Driver', team: 'Team', time: 'Time', gap: 'Gap', laps: 'Laps', points: 'Points' },
+      lapDown: '+1 lap',
+      lapsDown: '+{n} laps',
+      dnf: 'DNF',
+      fastestLap: 'Fastest lap',
+      ownDriver: 'Escudería Pegaso driver',
+    },
     footer: {
       partners: 'Official partners',
       teamSponsor: 'Team sponsor',
@@ -278,6 +371,37 @@ export const ui: Record<Lang, UIStrings> = {
       loadMore: 'Mostra més notícies',
       empty: 'Encara no hi ha notícies en aquesta categoria.',
       results: '{n} notícies',
+    },
+    races: {
+      intro: 'Els {n} Grans Premis de la temporada {season}, amb la classificació i la cursa de cadascun.',
+      done: 'Disputada',
+      next: 'Propera',
+      winner: 'Guanyador',
+      location: 'Ubicació',
+      length: 'Longitud',
+      laps: 'Voltes',
+      distance: 'Distància',
+      qualiRecord: 'Rècord de classificació',
+      raceRecord: 'Rècord de cursa',
+      map: 'Circuit',
+      weather: 'Previsió meteorològica',
+      chance: 'Probabilitat',
+      qualifying: 'Classificació',
+      race: 'Cursa',
+      pending: 'Pendent',
+      noResults: 'Resultats disponibles després de la sessió.',
+      startsIn: 'La cursa comença en',
+      finished: 'Acabada',
+      ownTitle: "L'Escudería Pegaso en aquest Gran Premi",
+      allRaces: 'Totes les curses',
+      prevRace: 'Gran Premi anterior',
+      nextRace: 'Gran Premi següent',
+      cols: { pos: 'Pos.', driver: 'Pilot', team: 'Equip', time: 'Temps', gap: 'Diferència', laps: 'Voltes', points: 'Punts' },
+      lapDown: '+1 volta',
+      lapsDown: '+{n} voltes',
+      dnf: 'DNF',
+      fastestLap: 'Volta ràpida',
+      ownDriver: "Pilot de l'Escudería Pegaso",
     },
     footer: {
       partners: 'Socis oficials',

@@ -1,0 +1,35 @@
+---
+/** Casco del piloto. Si no hay imagen, un casco dibujado con el color del equipo. */
+import { Image } from 'astro:assets';
+import { helmetImage, type GridDriver, type Team } from '../data/races';
+
+interface Props {
+  driver: GridDriver;
+  team: Team;
+  size?: number;
+}
+
+const { driver, team, size = 28 } = Astro.props;
+const img = helmetImage(driver);
+---
+
+{
+  img ? (
+    <Image src={img} alt="" width={size} height={size} densities={[1, 2]} class="helmet" />
+  ) : (
+    <svg class="helmet" viewBox="0 0 32 32" width={size} height={size} aria-hidden="true" focusable="false">
+      <path d="M3.5 19.5C3.5 11.8 9.3 6 16.6 6 23.6 6 28.5 11.2 28.5 17.6v4.9a2 2 0 0 1-2 2H9.4a5.9 5.9 0 0 1-5.9-5z" fill={team.color} />
+      <path d="M14.5 13.2h12.7c.4 1.1.6 2.3.7 3.6v.9H16.2a1.7 1.7 0 0 1-1.7-1.7z" fill="#0d0d0f" opacity=".82" />
+      <path d="M9.4 24.5h17.1" stroke="#0d0d0f" stroke-opacity=".25" stroke-width="1.2" />
+    </svg>
+  )
+}
+
+<style>
+  .helmet {
+    flex-shrink: 0;
+    width: var(--helmet-size, 28px);
+    height: var(--helmet-size, 28px);
+    object-fit: contain;
+  }
+</style>

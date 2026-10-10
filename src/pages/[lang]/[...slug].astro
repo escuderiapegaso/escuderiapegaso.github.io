@@ -3,7 +3,8 @@
  * Genera todas las páginas en los tres idiomas:
  *  - las secciones del mapa de rutas (`src/i18n/routes.ts`), cada una con su
  *    vista; las que aún no tienen vista propia muestran «en construcción»;
- *  - una página por noticia (`src/content/news/<idioma>/<noticia>.md`).
+ *  - una página por noticia (`src/content/news/<idioma>/<noticia>.md`);
+ *  - una ficha por Gran Premio del calendario (`src/data/calendar.ts`).
  */
 import type { GetStaticPaths } from 'astro';
 import { getImage } from 'astro:assets';
@@ -11,18 +12,22 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import HomeView from '../../views/HomeView.astro';
 import ArticleView from '../../views/ArticleView.astro';
 import NewsListView from '../../views/NewsListView.astro';
+import RacesListView from '../../views/RacesListView.astro';
+import RaceView from '../../views/RaceView.astro';
 import ComingSoonView from '../../views/ComingSoonView.astro';
 import { langs, type Lang } from '../../i18n/config';
 import { routes, type RouteKey } from '../../i18n/routes';
-import { useTranslations } from '../../i18n/ui';
-import { drivers, teamPrincipal } from '../../data/team';
+import { useTranslations, fill } from '../../i18n/ui';
+import { drivers, teamPrincipal, season } from '../../data/team';
 import { getNews, newsAlternates, splitId, type NewsEntry } from '../../data/news';
+import { races } from '../../data/calendar';
+import { raceAlternates } from '../../data/races';
 
 export const getStaticPaths = (async () => {
   const sections = langs.flatMap((lang) =>
     (Object.keys(routes) as RouteKey[]).map((key) => ({
       params: { lang, slug: routes[key][lang] || undefined },
-      props: { lang, routeKey: key, entry: undefined as NewsEntry | undefined },
+      props: { lang, routeKey: key } as Props,
     }))
   );
 
@@ -31,22 +36,30 @@ export const getStaticPaths = (async () => {
       langs.map(async (lang) =>
         (await getNews(lang)).map((entry) => ({
           params: { lang, slug: `${routes.news[lang]}/${splitId(entry).slug}` },
-          props: { lang, routeKey: 'news' as RouteKey, entry },
+          props: { lang, routeKey: 'news', entry } as Props,
         }))
       )
     )
   ).flat();
 
-  return [...sections, ...articles];
+  const grandsPrix = langs.flatMap((lang) =>
+    races.map((race, raceIndex) => ({
+      params: { lang, slug: `${routes.races[lang]}/${race.circuit}` },
+      props: { lang, routeKey: 'races', raceIndex } as Props,
+    }))
+  );
+
+  return [...sections, ...articles, ...grandsPrix];
 }) satisfies GetStaticPaths;
 
 interface Props {
   lang: Lang;
   routeKey: RouteKey;
   entry?: NewsEntry;
+  raceIndex?: number;
 }
 
-const { lang, routeKey, entry } = Astro.props;
+const { lang, routeKey, entry, raceIndex } = Astro.props;
 const t = useTranslations(lang);
 
 // Título y rótulo de cada página
@@ -64,6 +77,11 @@ if (entry) {
   description = entry.data.excerpt;
   alternates = await newsAlternates(splitId(entry).slug);
   ogImage = (await getImage({ src: entry.data.image, width: 1200, format: 'jpg' })).src;
+} else if (raceIndex !== undefined) {
+  const race = races[raceIndex];
+  title = `${race.name[lang]} · ${t.common.season} ${season.number}`;
+  description = `${fill(t.calendar.round, { n: race.round })} · ${race.circuitName}`;
+  alternates = raceAlternates(race);
 } else if (person) {
   title = person.role === 'teamPrincipal' ? 'nicorz' : person.name;
   kicker = person.role === 'teamPrincipal' ? t.common.teamPrincipal : `${t.common.driver} #${person.number}`;
@@ -76,10 +94,14 @@ if (entry) {
   {
     entry ? (
       <ArticleView lang={lang} entry={entry} />
+    ) : raceIndex !== undefined ? (
+      <RaceView lang={lang} index={raceIndex} />
     ) : routeKey === 'home' ? (
       <HomeView lang={lang} />
     ) : routeKey === 'news' ? (
       <NewsListView lang={lang} />
+    ) : routeKey === 'races' ? (
+      <RacesListView lang={lang} />
     ) : (
       <ComingSoonView lang={lang} title={title!} kicker={kicker} />
     )

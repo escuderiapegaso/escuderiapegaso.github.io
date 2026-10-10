@@ -1,0 +1,181 @@
+# Datos fijos de cada circuito (valen para todas las temporadas).
+# La clave (melbourne, shanghai...) es la misma que `circuit` en src/data/calendar.ts.
+#
+#   city:    ciudad o localidad
+#   length:  longitud de la vuelta en km, con punto decimal (p. ej. 5.278)
+#   laps:    número de vueltas de la carrera
+#   qualiRecord / raceRecord: récord de clasificación y de carrera
+#     time:   '1:15.096'   (entre comillas)
+#     driver: nombre del piloto
+#     team:   nombre del equipo
+#     season: temporada (número)
+#
+# Lo que dejes vacío se muestra como «—».
+
+melbourne:
+  city: Melbourne
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+shanghai:
+  city: Shanghái
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+suzuka:
+  city: Suzuka
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+sakhir:
+  city: Sakhir
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+jeddah:
+  city: Yeda
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+miami:
+  city: Miami
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+montreal:
+  city: Montreal
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+monaco:
+  city: Montecarlo
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+barcelona:
+  city: Montmeló
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+spielberg:
+  city: Spielberg
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+silverstone:
+  city: Silverstone
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+spa:
+  city: Stavelot
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+hungaroring:
+  city: Mogyoród
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+zandvoort:
+  city: Zandvoort
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+monza:
+  city: Monza
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+madrid:
+  city: Madrid
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+baku:
+  city: Bakú
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+singapore:
+  city: Singapur
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+austin:
+  city: Austin
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+mexico:
+  city: Ciudad de México
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+interlagos:
+  city: São Paulo
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+las-vegas:
+  city: Las Vegas
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+losail:
+  city: Lusail
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }
+
+yas-marina:
+  city: Abu Dabi
+  length:
+  laps:
+  qualiRecord: { time: '', driver: '', team: '', season: }
+  raceRecord: { time: '', driver: '', team: '', season: }

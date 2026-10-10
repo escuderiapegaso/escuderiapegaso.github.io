@@ -6,6 +6,7 @@ dist/
 # Material original (las versiones que usa la web están en src/assets)
 /logos/
 /circuits/
+/weather/
 /*.png
 /*.jpg
 /*.jpeg

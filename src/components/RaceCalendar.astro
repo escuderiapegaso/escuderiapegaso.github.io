@@ -12,6 +12,7 @@ import { getPath } from '../i18n/routes';
 import { useTranslations, fill } from '../i18n/ui';
 import { season } from '../data/team';
 import { races, circuitImage, formatWeekend, nextRaceIndex } from '../data/calendar';
+import { racePath } from '../data/races';
 
 interface Props {
   lang: Lang;
@@ -67,7 +68,7 @@ const unitKeys = ['d', 'h', 'm', 's'] as const;
             class:list={['race', { 'is-past': next !== -1 && i < next, 'is-next': i === next }]}
             data-race-start={race.raceStart}
           >
-            <a class="race__link" href={racesHref}>
+            <a class="race__link" href={racePath(lang, race)}>
               <span class="race__date">{formatWeekend(race, lang)}</span>
               <span class="race__name">
                 <Flag code={race.country} />

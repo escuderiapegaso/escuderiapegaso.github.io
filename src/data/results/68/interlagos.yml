@@ -1,0 +1,11 @@
+# Gran Premio de São Paulo · Ronda 21 · Temporada 68
+# Cómo rellenarlo: src/data/results/LEEME.md
+
+qualifying:
+  weather:
+  results: []
+
+race:
+  weather:
+  fastestLap:
+  results: []

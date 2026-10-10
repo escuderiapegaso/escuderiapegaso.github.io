@@ -1,0 +1,221 @@
+---
+/**
+ * Tabla de resultados de una sesión (clasificación o carrera).
+ * Las filas de los pilotos de la Escudería Pegaso salen resaltadas en amarillo.
+ */
+import Helmet from './Helmet.astro';
+import TeamEmblem from './TeamEmblem.astro';
+import type { Lang } from '../i18n/config';
+import { useTranslations, fill } from '../i18n/ui';
+import type { Row } from '../data/races';
+
+interface Props {
+  lang: Lang;
+  rows: Row[];
+  kind: 'qualifying' | 'race';
+  caption: string;
+}
+
+const { lang, rows, kind, caption } = Astro.props;
+const t = useTranslations(lang);
+const c = t.races.cols;
+const isRace = kind === 'race';
+
+const gapText = (r: Row) =>
+  r.lapsDown ? (r.lapsDown === 1 ? t.races.lapDown : fill(t.races.lapsDown, { n: r.lapsDown })) : r.gap;
+---
+
+<div class="table-wrap">
+  <table class:list={['results', `results--${kind}`]}>
+    <caption class="visually-hidden">{caption}</caption>
+    <thead>
+      <tr>
+        <th scope="col" class="col-pos">{c.pos}</th>
+        <th scope="col">{c.driver}</th>
+        <th scope="col" class="col-team">{c.team}</th>
+        {isRace && <th scope="col" class="col-num col-laps">{c.laps}</th>}
+        <th scope="col" class="col-num col-time">{c.time}</th>
+        <th scope="col" class="col-num col-gap">{c.gap}</th>
+        {isRace && <th scope="col" class="col-num col-pts">{c.points}</th>}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r) => (
+          <tr class:list={{ 'is-own': r.own, 'is-dnf': r.dnf }}>
+            <td class="col-pos">{r.dnf ? <span class="dnf">{t.races.dnf}</span> : r.pos}</td>
+            <th scope="row" class="col-driver">
+              <span class="cell">
+                <Helmet driver={r.driver} team={r.team} />
+                <span class="driver-name">
+                  {r.driver.name}
+                  {r.own && <span class="visually-hidden"> ({t.races.ownDriver})</span>}
+                </span>
+                {r.driver.number !== undefined && <span class="driver-num">{r.driver.number}</span>}
+              </span>
+            </th>
+            <td class="col-team">
+              <span class="cell">
+                <span class="team-stripe" style={`background:${r.team.color}`} aria-hidden="true" />
+                <TeamEmblem team={r.team} />
+                <span class="team-name">{r.team.name}</span>
+              </span>
+            </td>
+            {isRace && <td class="col-num col-laps">{r.laps ?? '—'}</td>}
+            <td class="col-num col-time">
+              {r.dnf ? t.races.dnf : (r.time ?? '—')}
+              {r.fastestLap && (
+                <span class="fastest" title={t.races.fastestLap}>
+                  <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <circle cx="8" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6" />
+                    <path d="M8 6.2V9l1.8 1.2M6.5 1.8h3M8 1.8v1.7" fill="none" stroke="currentColor" stroke-width="1.6" />
+                  </svg>
+                  <span class="visually-hidden">{t.races.fastestLap}</span>
+                </span>
+              )}
+            </td>
+            <td class="col-num col-gap">{r.dnf || r.pos === 1 ? '—' : (gapText(r) ?? '—')}</td>
+            {isRace && <td class="col-num col-pts">{r.points ? r.points : '—'}</td>}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .table-wrap {
+    overflow-x: auto;
+    background: #fff;
+    border: 1px solid var(--c-line);
+  }
+
+  .results {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .results th,
+  .results td {
+    padding: 0.55rem 0.75rem;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .results thead th {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+    background: var(--c-surface);
+  }
+
+  .results tbody tr:last-child > * {
+    border-bottom: 0;
+  }
+
+  .results tbody th {
+    font-weight: 600;
+  }
+
+  .col-pos {
+    width: 3.25rem;
+    text-align: center !important;
+    font-weight: 700;
+  }
+
+  .col-num {
+    text-align: right !important;
+  }
+
+  .cell {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .driver-num {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--c-text-muted);
+  }
+
+  .team-stripe {
+    width: 4px;
+    height: 1.4rem;
+    border-radius: 1px;
+  }
+
+  .team-name {
+    color: var(--c-text-muted);
+  }
+
+  .col-pts {
+    font-weight: 700;
+  }
+
+  .dnf {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--c-text-muted);
+  }
+
+  .is-dnf .col-time {
+    color: var(--c-text-muted);
+  }
+
+  .fastest {
+    display: inline-grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-left: 0.4rem;
+    border-radius: 50%;
+    background: #7d2ae8;
+    color: #fff;
+    vertical-align: -0.3rem;
+  }
+
+  .fastest svg {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+
+  /* Pilotos de la Escudería Pegaso */
+  .is-own > * {
+    background: #fff6b3;
+  }
+
+  .is-own .col-pos {
+    box-shadow: inset 4px 0 0 var(--c-chev-yellow);
+  }
+
+  .is-own .team-name,
+  .is-own .driver-num {
+    color: var(--c-text);
+  }
+
+  /* Móvil: se ocultan columnas secundarias */
+  @media (max-width: 719.98px) {
+    .results th,
+    .results td {
+      padding: 0.5rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .team-name,
+    .driver-num,
+    .results--race .col-time,
+    .results--race .col-laps {
+      display: none;
+    }
+
+    .results thead .col-team {
+      font-size: 0;
+    }
+  }
+</style>
