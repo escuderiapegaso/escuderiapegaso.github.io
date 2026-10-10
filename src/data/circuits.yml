@@ -14,17 +14,17 @@
 
 melbourne:
   city: Melbourne
-  length:
-  laps:
-  qualiRecord: { time: '', driver: '', team: '', season: }
-  raceRecord: { time: '', driver: '', team: '', season: }
+  length: 5.278
+  laps: 58
+  qualiRecord: { time: '1:23.449', driver: 'Philippe de Saint-Germain III', team: 'Red Bull Racing Vaillante', season: }
+  raceRecord: { time: '1:24.108', driver: 'Luka Jerman', team: 'Porsche Racing', season: }
 
 shanghai:
-  city: Shanghái
-  length:
-  laps:
-  qualiRecord: { time: '', driver: '', team: '', season: }
-  raceRecord: { time: '', driver: '', team: '', season: }
+  city: Shanghai
+  length: 5.451
+  laps: 55
+  qualiRecord: { time: '1:35.580', driver: 'Philippe de Saint-Germain III', team: 'Red Bull Racing Vaillante', season: }
+  raceRecord: { time: '1:36.408', driver: 'Bernardino Campolargo', team: 'Red Bull Racing Vaillante', season: }
 
 suzuka:
   city: Suzuka
@@ -41,7 +41,7 @@ sakhir:
   raceRecord: { time: '', driver: '', team: '', season: }
 
 jeddah:
-  city: Yeda
+  city: Jeddah
   length:
   laps:
   qualiRecord: { time: '', driver: '', team: '', season: }
@@ -55,14 +55,14 @@ miami:
   raceRecord: { time: '', driver: '', team: '', season: }
 
 montreal:
-  city: Montreal
+  city: Montréal
   length:
   laps:
   qualiRecord: { time: '', driver: '', team: '', season: }
   raceRecord: { time: '', driver: '', team: '', season: }
 
 monaco:
-  city: Montecarlo
+  city: Monte Carlo
   length:
   laps:
   qualiRecord: { time: '', driver: '', team: '', season: }
@@ -70,10 +70,10 @@ monaco:
 
 barcelona:
   city: Montmeló
-  length:
-  laps:
-  qualiRecord: { time: '', driver: '', team: '', season: }
-  raceRecord: { time: '', driver: '', team: '', season: }
+  length: 4.657
+  laps: 66
+  qualiRecord: { time: '1:18.380', driver: 'Philippe de Saint-Germain III', team: 'Red Bull Racing Vaillante', season: }
+  raceRecord: { time: '1:18.991', driver: 'Andrej Vidmar', team: 'McLaren Racing', season: }
 
 spielberg:
   city: Spielberg
@@ -125,14 +125,14 @@ madrid:
   raceRecord: { time: '', driver: '', team: '', season: }
 
 baku:
-  city: Bakú
+  city: Baku
   length:
   laps:
   qualiRecord: { time: '', driver: '', team: '', season: }
   raceRecord: { time: '', driver: '', team: '', season: }
 
 singapore:
-  city: Singapur
+  city: Singapore
   length:
   laps:
   qualiRecord: { time: '', driver: '', team: '', season: }
@@ -146,7 +146,7 @@ austin:
   raceRecord: { time: '', driver: '', team: '', season: }
 
 mexico:
-  city: Ciudad de México
+  city: Mexico City
   length:
   laps:
   qualiRecord: { time: '', driver: '', team: '', season: }
@@ -167,14 +167,14 @@ las-vegas:
   raceRecord: { time: '', driver: '', team: '', season: }
 
 losail:
-  city: Lusail
+  city: Losail
   length:
   laps:
   qualiRecord: { time: '', driver: '', team: '', season: }
   raceRecord: { time: '', driver: '', team: '', season: }
 
 yas-marina:
-  city: Abu Dabi
+  city: Abu Dhabi
   length:
   laps:
   qualiRecord: { time: '', driver: '', team: '', season: }
