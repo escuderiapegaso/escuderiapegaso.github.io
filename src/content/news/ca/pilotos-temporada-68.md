@@ -1,10 +1,12 @@
 ---
 title: Cannon i Raveel, la parella de pilots per a la temporada 68
-date: 2026-09-28
-category: team
+date: 2026-10-02
+category: ddp
+tag: ''
 excerpt: El canadenc John Cannon (#10) i el belga Remco Raveel (#17) defensaran els colors de l'Escudería Pegaso.
 image: /src/assets/news/pilotos-temporada-68.jpg
 imageAlt: Emblema de l'Escudería Pegaso
+imagePosition: 50% 50%
 draft: false
 ---
 
