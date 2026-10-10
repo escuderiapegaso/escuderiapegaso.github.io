@@ -1,5 +1,5 @@
 ---
-title: Novena actualización del Programa de Desarrollo de Pilotos (temporada 67)
+title: Novena actualización del Programa de Desarrollo de Pilotos
 date: 2026-10-02
 category: ddp
 tag: ''
