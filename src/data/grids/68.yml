@@ -7,13 +7,65 @@ teams:
     name: Red Bull Racing Vaillante
     color: '#192aa9'
     emblem: /src/assets/teams/red-bull.webp
+  - id: porsche
+    name: Porsche Racing
+    color: '#2d2525'
+    emblem: /src/assets/teams/porsche.webp
+  - id: spyker
+    name: WRT Spyker
+    color: '#b9690e'
+    emblem: /src/assets/teams/spyker.webp
+  - id: mclaren
+    name: McLaren F1 Team
+    color: '#ff7b00'
+    emblem: /src/assets/teams/mclaren.webp
+  - id: chevrolet
+    name: Chevrolet F1 Motorsports
+    color: '#56b359'
+    emblem: /src/assets/teams/chevrolet.webp
+  - id: toyota
+    name: Toyota Gazoo Racing
+    color: '#18fbf8'
+    emblem: /src/assets/teams/toyota.webp
+  - id: ferrari
+    name: Scuderia Ferrari SpA
+    color: '#c81116'
+    emblem: /src/assets/teams/ferrari.webp
+  - id: alpine
+    name: Alpine F1 Team
+    color: '#000000'
+    emblem: /src/assets/teams/alpine.webp
+  - id: aston-martin
+    name: Aston Martin Racing
+    color: '#2b362f'
+    emblem: /src/assets/teams/aston-martin.webp
+  - id: b15
+    name: B15 Racing
+    color: '#cae269'
+    emblem: /src/assets/teams/b15.webp
+  - id: ford
+    name: Ford Motorsport
+    color: '#402fc1'
+    emblem: /src/assets/teams/ford.webp
+  - id: jordan
+    name: Jordan F1 Team
+    color: '#ffff00'
+    emblem: /src/assets/teams/jordan.webp
+  - id: senna
+    name: Senna Racing F1
+    color: '#ffffff'
+    emblem: /src/assets/teams/senna.webp
+  - id: lotus
+    name: Lotus Formula One Team
+    color: '#bed855'
+    emblem: /src/assets/teams/lotus.webp
 drivers:
   - id: john-cannon
     name: John Cannon
     country: CA
     number: 78
     team: pegaso
-    helmet: cannon-helmet
+    helmet: /src/assets/helmets/cannon-helmet.png
   - id: remco-raveel
     name: Remco Raveel
     country: BE
