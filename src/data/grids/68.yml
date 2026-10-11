@@ -96,3 +96,27 @@ drivers:
     number: null
     team: chevrolet
     helmet: /src/assets/helmets/madalynn-clara.webp
+  - id: aljaz-zupancic
+    name: Aljaž Zupančič
+    country: SI
+    number: null
+    team: mclaren
+    helmet: /src/assets/helmets/zupancic-helmet.webp
+  - id: gregory-moore
+    name: Gregory Moore
+    country: CA
+    number: null
+    team: mclaren
+    helmet: /src/assets/helmets/moore-helmet.webp
+  - id: nacer-gonza
+    name: Nacer Gonza
+    country: ES
+    number: null
+    team: spyker
+    helmet: /src/assets/helmets/nacer-helmet.webp
+  - id: brendan-mcgee
+    name: Brendan McGee
+    country: US
+    number: null
+    team: spyker
+    helmet: /src/assets/helmets/mcgee-helmet.webp
