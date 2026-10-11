@@ -44,7 +44,7 @@ export interface Person {
 }
 
 export const drivers: Person[] = [
-  { id: 'john-cannon', name: 'John Cannon', country: 'CA', number: 10, role: 'driver', page: 'team/john-cannon' },
+  { id: 'john-cannon', name: 'John Cannon', country: 'CA', number: 78, role: 'driver', page: 'team/john-cannon' },
   { id: 'remco-raveel', name: 'Remco Raveel', country: 'BE', number: 17, role: 'driver', page: 'team/remco-raveel' },
 ].map((d) => ({ ...d, role: d.role as Person['role'], page: d.page as RouteKey, portrait: findPortrait(d.id) }));
 

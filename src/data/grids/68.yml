@@ -11,7 +11,7 @@ drivers:
   - id: john-cannon
     name: John Cannon
     country: CA
-    number: 10
+    number: 78
     team: pegaso
     helmet: cannon-helmet
   - id: remco-raveel
