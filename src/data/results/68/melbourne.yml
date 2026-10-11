@@ -1,11 +1,17 @@
 name: Gran Premio de Australia
 round: 1
-
 qualifying:
-  weather:
+  weather: null
   results: []
-
 race:
-  weather:
-  fastestLap:
-  results: []
+  weather: null
+  fastestLap: null
+  results:
+    - driver: jose-reckziegel
+      laps: null
+      time: ''
+      dnf: false
+    - driver: philippe-saintgermain-iii
+      laps: null
+      time: ''
+      dnf: false
