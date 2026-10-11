@@ -84,3 +84,15 @@ drivers:
     number: 1
     team: red-bull
     helmet: /src/assets/helmets/saintgermain-helmet.webp
+  - id: juan-barnard
+    name: Juan Barnard
+    country: ES
+    number: 25
+    team: chevrolet
+    helmet: /src/assets/helmets/juan-barnard.webp
+  - id: madalynn-clara
+    name: Madalynn Clara
+    country: US
+    number: null
+    team: chevrolet
+    helmet: /src/assets/helmets/madalynn-clara.webp
