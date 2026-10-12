@@ -1,13 +1,9 @@
 ---
-name: Nombre Apellido
-role: Director técnico
+name: Wim van den Steen
+role: Asistente de equipo
 group: management
 order: 2
-country: ES
+country: BE
 photo: ''
 draft: false
 ---
-
-*Persona de ejemplo. Sustitúyela o bórrala desde el panel.*
-
-Aquí va la biografía: trayectoria, equipos anteriores y responsabilidades dentro de la Escudería Pegaso.

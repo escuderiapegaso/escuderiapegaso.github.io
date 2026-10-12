@@ -1,13 +1,9 @@
 ---
-name: Nombre Apellido
-role: Technical Director
+name: Wim van den Steen
+role: Deputy Team Manager
 group: management
 order: 2
-country: ES
+country: BE
 photo: ''
 draft: false
 ---
-
-*Sample person. Replace or delete it from the panel.*
-
-The biography goes here: career, previous teams and responsibilities at Escudería Pegaso.
