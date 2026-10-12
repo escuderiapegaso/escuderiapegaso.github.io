@@ -1,9 +1,10 @@
 ---
-name: Nombre Apellido
+name: Jordi Domènech
 role: Cap d'enginyers de pista
 group: management
 order: 3
-country: IT
+country: ES
+photo: ''
 draft: false
 ---
 

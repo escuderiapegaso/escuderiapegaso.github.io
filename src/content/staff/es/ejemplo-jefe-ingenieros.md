@@ -1,10 +1,9 @@
 ---
-name: Nombre Apellido
-role: Jefe de ingenieros de pista
+name: Jordi Domènech
+role: Jefe de diseño
 group: management
 order: 3
-country: IT
+country: ES
+photo: ''
 draft: false
 ---
-
-*Persona de ejemplo. Sustitúyela o bórrala desde el panel.*
