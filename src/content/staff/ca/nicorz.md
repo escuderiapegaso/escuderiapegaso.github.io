@@ -4,6 +4,6 @@ role: Director de l'equip
 group: principal
 order: 1
 country: ES
-photo: /src/assets/staff/nicorz-portrait.webp
+photo: /src/assets/staff/nicorz-portrait-1.webp
 draft: false
 ---
