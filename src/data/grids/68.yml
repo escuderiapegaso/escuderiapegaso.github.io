@@ -93,7 +93,7 @@ drivers:
   - id: madalynn-clara
     name: Madalynn Clara
     country: US
-    number: null
+    number: 3
     team: chevrolet
     helmet: /src/assets/helmets/madalynn-clara.webp
   - id: aljaz-zupancic
