@@ -40,6 +40,7 @@ interface UIStrings {
   };
   article: { back: string; published: string; more: string; viewAll: string };
   newsList: { intro: string; filter: string; all: string; loadMore: string; empty: string; results: string };
+  team: { officialDriver: string; management: string; viewMore: string; close: string };
   races: {
     intro: string;
     done: string;
@@ -144,6 +145,7 @@ export const ui: Record<Lang, UIStrings> = {
       empty: 'Todavía no hay noticias en esta categoría.',
       results: '{n} noticias',
     },
+    team: { officialDriver: 'Piloto oficial', management: 'Equipo directivo', viewMore: 'Ver más', close: 'Cerrar' },
     races: {
       intro: 'Los {n} Grandes Premios de la temporada {season}, con la clasificación y la carrera de cada uno.',
       done: 'Disputada',
@@ -258,6 +260,7 @@ export const ui: Record<Lang, UIStrings> = {
       empty: 'There is no news in this category yet.',
       results: '{n} stories',
     },
+    team: { officialDriver: 'Official driver', management: 'Management team', viewMore: 'View more', close: 'Close' },
     races: {
       intro: 'All {n} Grands Prix of season {season}, with qualifying and race results for each one.',
       done: 'Completed',
@@ -372,6 +375,7 @@ export const ui: Record<Lang, UIStrings> = {
       empty: 'Encara no hi ha notícies en aquesta categoria.',
       results: '{n} notícies',
     },
+    team: { officialDriver: 'Pilot oficial', management: 'Equip directiu', viewMore: 'Mostra més', close: 'Tanca' },
     races: {
       intro: 'Els {n} Grans Premis de la temporada {season}, amb la classificació i la cursa de cadascun.',
       done: 'Disputada',

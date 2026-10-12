@@ -145,4 +145,27 @@ const results = defineCollection({
   }),
 });
 
-export const collections = { news, circuits, grids, results };
+/* ---------- Equipo ---------- */
+
+/**
+ * Personal del equipo: src/content/staff/<idioma>/<persona>.md (se edita en /admin/).
+ *  - group «principal»: director del equipo (bloque grande, enlaza a su página).
+ *  - group «management»: equipo directivo (tarjetas con «Ver más»).
+ * El texto del archivo es la biografía que se abre con «Ver más».
+ */
+const staff = defineCollection({
+  loader: glob({ pattern: '*/*.md', base: './src/content/staff' }),
+  schema: ({ image }) =>
+    z.object({
+      name: z.string(),
+      role: z.string(),
+      group: z.enum(['principal', 'management']).default('management'),
+      /** Orden en la página (1, 2, 3…). Sin número van al final. */
+      order: optionalNumber,
+      country: optionalText,
+      photo: z.preprocess((v) => (v === '' || v === null ? undefined : v), image().optional()),
+      draft: z.boolean().nullish().transform((v) => v ?? false),
+    }),
+});
+
+export const collections = { news, circuits, grids, results, staff };

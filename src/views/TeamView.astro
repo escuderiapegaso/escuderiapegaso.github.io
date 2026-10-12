@@ -1,0 +1,422 @@
+---
+/**
+ * Equipo · visión general (al estilo de la web de Ferrari):
+ *  1. Los dos pilotos oficiales.
+ *  2. El director del equipo (enlaza a su página).
+ *  3. El equipo directivo: tarjetas con «Ver más», que abre la biografía.
+ * El personal se edita en /admin/ → «Equipo · Personal».
+ */
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import DriverPanels from '../components/DriverPanels.astro';
+import CircleArrow from '../components/CircleArrow.astro';
+import Flag from '../components/Flag.astro';
+import type { Lang } from '../i18n/config';
+import { getPath } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+import { getStaff, initials } from '../data/staff';
+import { countryName } from '../data/races';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const staff = await getStaff(lang);
+const principal = staff.find((s) => s.data.group === 'principal');
+const management = await Promise.all(
+  staff
+    .filter((s) => s.data.group === 'management')
+    .map(async (entry, i) => ({
+      entry,
+      id: `staff-${i + 1}`,
+      Content: (await render(entry)).Content,
+      hasBio: !!entry.body?.trim(),
+    }))
+);
+
+const photoWidths = (w: number) => [480, 800, 1200].filter((x) => x < w).concat(Math.min(w, 1600));
+---
+
+<h1 class="visually-hidden">{t.pages.team}</h1>
+
+<DriverPanels lang={lang} kicker={t.team.officialDriver} />
+
+{
+  principal && (
+    <section class="principal" aria-labelledby="principal-name">
+      <div class="principal__media">
+        {principal.data.photo ? (
+          <Image
+            src={principal.data.photo}
+            alt=""
+            widths={photoWidths(principal.data.photo.width)}
+            sizes="(min-width: 900px) 50vw, 100vw"
+            class="photo"
+          />
+        ) : (
+          <span class="initials display" aria-hidden="true">
+            {initials(principal.data.name)}
+          </span>
+        )}
+      </div>
+      <div class="principal__body">
+        <p class="principal__role">{principal.data.role}</p>
+        <h2 id="principal-name" class="principal__name display">
+          {principal.data.name}
+        </h2>
+        <a class="discover" href={getPath(lang, 'team/nicorz')}>
+          {t.home.discover}
+          <CircleArrow />
+        </a>
+      </div>
+    </section>
+  )
+}
+
+{
+  management.length > 0 && (
+    <section class="management" aria-labelledby="management-title">
+      <div class="container">
+        <h2 id="management-title" class="section-title management__title">
+          {t.team.management}
+        </h2>
+        <ul class="staff-grid" role="list">
+          {management.map(({ entry, id, Content, hasBio }) => {
+            const { name, role, photo, country } = entry.data;
+            const media = photo ? (
+              <Image src={photo} alt="" widths={photoWidths(photo.width)} sizes="(min-width: 1100px) 480px, (min-width: 720px) 45vw, 92vw" class="photo" />
+            ) : (
+              <span class="initials display" aria-hidden="true">
+                {initials(name)}
+              </span>
+            );
+            return (
+              <li class="staff">
+                <div class="staff__media">{media}</div>
+                <h3 class="staff__name display">{name}</h3>
+                <p class="staff__role">{role}</p>
+                {hasBio && (
+                  <>
+                    <button type="button" class="staff__more" data-open={id} aria-haspopup="dialog">
+                      <svg viewBox="0 0 12 12" aria-hidden="true">
+                        <path d="M4 1.5 8.5 6 4 10.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+                      </svg>
+                      {t.team.viewMore}
+                      <span class="visually-hidden">: {name}</span>
+                    </button>
+                    <dialog id={id} class="bio" aria-labelledby={`${id}-name`}>
+                      <form method="dialog" class="bio__close-form">
+                        <button class="bio__close" aria-label={t.team.close}>
+                          <svg viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="m3 3 10 10M13 3 3 13" stroke="currentColor" stroke-width="1.8" />
+                          </svg>
+                        </button>
+                      </form>
+                      <div class="bio__inner">
+                        <div class="bio__media">{media}</div>
+                        <div class="bio__text">
+                          <p class="bio__role">{role}</p>
+                          <h3 id={`${id}-name`} class="bio__name display">{name}</h3>
+                          {country && (
+                            <p class="bio__country">
+                              <Flag code={country} />
+                              {countryName(country, lang)}
+                            </p>
+                          )}
+                          <div class="bio__body">
+                            <Content />
+                          </div>
+                        </div>
+                      </div>
+                    </dialog>
+                  </>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-open]').forEach((btn) => {
+    const dialog = document.getElementById(btn.dataset.open!) as HTMLDialogElement | null;
+    if (!dialog) return;
+    btn.addEventListener('click', () => {
+      dialog.showModal();
+      document.body.classList.add('dialog-open');
+    });
+    dialog.addEventListener('close', () => {
+      document.body.classList.remove('dialog-open');
+      btn.focus();
+    });
+    // Un clic fuera de la ventana la cierra
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  });
+</script>
+
+<style>
+  /* Fondo granate con iluminación, común a fotos y tarjetas sin foto */
+  .principal__media,
+  .staff__media,
+  .bio__media {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: radial-gradient(90% 75% at 50% 30%, #5c0a26 0%, #33040f 55%, #170207 100%);
+  }
+
+  .principal :global(.photo),
+  .staff :global(.photo),
+  .bio :global(.photo) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 15%;
+  }
+
+  .initials {
+    font-size: clamp(5rem, 14vw, 9rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.22);
+    user-select: none;
+  }
+
+  /* ---------- Director del equipo ---------- */
+  .principal {
+    display: grid;
+    background: #000;
+    color: #fff;
+  }
+
+  .principal__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .principal__body {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 0.75rem;
+    padding: clamp(2rem, 5vw, 3rem) var(--gutter);
+  }
+
+  .principal__role {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .principal__name {
+    max-width: 14ch;
+    font-size: clamp(1.75rem, 1rem + 2.6vw, 3rem);
+    line-height: 1.08;
+  }
+
+  .principal .discover {
+    margin-top: 0.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .principal {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .principal__body {
+      padding-inline: clamp(3rem, 9vw, 8rem);
+    }
+  }
+
+  /* ---------- Equipo directivo ---------- */
+  .management {
+    padding-block: clamp(3.5rem, 8vw, 6rem);
+    background: #000;
+    color: #fff;
+  }
+
+  .management__title {
+    text-align: center;
+  }
+
+  .staff-grid {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 3.5rem) 1.5rem;
+    max-width: 1000px;
+    margin: clamp(2.5rem, 6vw, 4.5rem) auto 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .staff__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .staff__name {
+    margin-top: 1.1rem;
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+    line-height: 1.15;
+  }
+
+  .staff__role {
+    margin-top: 0.3rem;
+    font-size: 1.0625rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .staff__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    margin-top: 0.4rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #fff;
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .staff__more svg {
+    width: 0.7rem;
+    height: 0.7rem;
+    transition: transform 0.2s var(--ease);
+  }
+
+  .staff__more:hover svg {
+    transform: translateX(3px);
+  }
+
+  .staff__more:hover {
+    color: var(--c-primary-light);
+  }
+
+  @media (min-width: 720px) {
+    .staff-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* ---------- Biografía (ventana) ---------- */
+  .bio {
+    width: min(860px, calc(100vw - 2rem));
+    max-height: calc(100dvh - 2rem);
+    padding: 0;
+    border: 0;
+    border-top: 3px solid var(--c-primary);
+    background: var(--c-ink-soft);
+    color: #fff;
+    overflow: auto;
+  }
+
+  .bio::backdrop {
+    background: rgba(0, 0, 0, 0.75);
+  }
+
+  .bio__close-form {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1;
+    margin: 0;
+  }
+
+  .bio__close {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .bio__close:hover {
+    background: var(--c-primary);
+  }
+
+  .bio__close svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .bio__inner {
+    display: grid;
+  }
+
+  .bio__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .bio__text {
+    padding: 1.75rem 1.75rem 2rem;
+  }
+
+  .bio__role {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--c-primary-light);
+  }
+
+  .bio__name {
+    margin-top: 0.4rem;
+    font-size: clamp(1.375rem, 1rem + 1.4vw, 2rem);
+    line-height: 1.15;
+  }
+
+  .bio__country {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+    font-size: 0.9375rem;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .bio__body {
+    margin-top: 1.25rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .bio__body :global(p + p) {
+    margin-top: 1em;
+  }
+
+  .bio__body :global(a) {
+    color: var(--c-primary-light);
+  }
+
+  @media (min-width: 760px) {
+    .bio__inner {
+      grid-template-columns: 0.9fr 1.1fr;
+    }
+
+    .bio__media {
+      aspect-ratio: auto;
+      min-height: 100%;
+    }
+
+    .bio__text {
+      padding: 2.5rem 2.25rem;
+    }
+  }
+
+  :global(body.dialog-open) {
+    overflow: hidden;
+  }
+</style>

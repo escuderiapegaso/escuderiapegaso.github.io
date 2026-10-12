@@ -10,9 +10,11 @@ import { drivers } from '../data/team';
 
 interface Props {
   lang: Lang;
+  /** Rótulo sobre el nombre, p. ej. «Piloto oficial» (página Equipo). */
+  kicker?: string;
 }
 
-const { lang } = Astro.props;
+const { lang, kicker } = Astro.props;
 const t = useTranslations(lang);
 ---
 
@@ -43,6 +45,7 @@ const t = useTranslations(lang);
                   {d.country && <> · {t.countries[d.country]}</>}
                 </span>
               </span>
+              {kicker && <span class="driver__kicker">{kicker}</span>}
               <span class="driver__name display">{d.name}</span>
               <span class="discover">
                 {t.home.discover}
@@ -173,6 +176,13 @@ const t = useTranslations(lang);
     font-weight: 600;
     letter-spacing: 0.08em;
     color: rgba(255, 255, 255, 0.82);
+  }
+
+  .driver__kicker {
+    margin-top: 0.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
   }
 
   .driver__name {

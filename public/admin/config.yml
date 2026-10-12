@@ -127,6 +127,53 @@ collections:
         i18n: true
 
   # ---------------------------------------------------------------------------
+  # Personal del equipo (página Equipo)
+  # ---------------------------------------------------------------------------
+  - name: staff
+    label: Equipo · Personal
+    label_singular: Persona
+    description: Director del equipo y equipo directivo que aparecen en la página Equipo.
+    folder: /src/content/staff
+    extension: md
+    format: frontmatter
+    create: true
+    i18n: true
+    identifier_field: name
+    slug: '{{slug}}'
+    summary: '{{order}}. {{name}} · {{role}}'
+    sortable_fields:
+      fields: [order, name]
+      default: { field: order, direction: ascending }
+    media_folder: /src/assets/staff
+    public_folder: /src/assets/staff
+    fields:
+      - { name: name, label: Nombre, widget: string, i18n: duplicate }
+      - { name: role, label: Cargo, widget: string, i18n: true }
+      - name: group
+        label: Sección
+        widget: select
+        default: management
+        i18n: duplicate
+        options:
+          - { label: Director del equipo (bloque grande), value: principal }
+          - { label: Equipo directivo (tarjetas), value: management }
+      - { name: order, label: Orden, hint: '1, 2, 3… Los números más bajos salen primero.', widget: number, value_type: int, min: 1, default: 10, i18n: duplicate }
+      - { name: country, label: País, hint: 'Código de dos letras: ES, IT, GB…', widget: string, required: false, pattern: ['^[A-Za-z]{2}$', 'Dos letras'], i18n: duplicate }
+      - name: photo
+        label: Foto
+        hint: 'De cintura para arriba, horizontal (4:3) o cuadrada, de al menos 1200 px. Mejor con fondo transparente o liso.'
+        widget: image
+        required: false
+        i18n: duplicate
+      - { name: draft, label: Oculto (no publicar), widget: boolean, default: false, required: false, i18n: duplicate }
+      - name: body
+        label: Biografía
+        hint: 'Se abre con «Ver más». Si la dejas vacía, la tarjeta no tiene botón.'
+        widget: richtext
+        required: false
+        i18n: true
+
+  # ---------------------------------------------------------------------------
   # Resultados de cada Gran Premio (un archivo por GP y temporada).
   # Para una temporada nueva: copia este bloque y cambia «68» por el número nuevo.
   # ---------------------------------------------------------------------------
