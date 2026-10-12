@@ -1,6 +1,6 @@
 ---
 name: Jordi Domènech
-role: Head of Design
+role: Deputy Team Manager
 group: management
 order: 3
 country: ES
