@@ -1,6 +1,6 @@
 ---
 name: Wim van den Steen
-role: Deputy Team Manager
+role: Driver Development Programme
 group: management
 order: 2
 country: BE

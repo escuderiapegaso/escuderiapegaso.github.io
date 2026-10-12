@@ -1,6 +1,6 @@
 ---
 name: Wim van den Steen
-role: Asistente de equipo
+role: Director del Programa de Desarrollo de Pilotos
 group: management
 order: 2
 country: BE

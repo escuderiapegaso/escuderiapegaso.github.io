@@ -1,6 +1,6 @@
 ---
 name: Wim van den Steen
-role: Vis-director d'equip
+role: Director del Programa de Desenvolupament de Pilots
 group: management
 order: 2
 country: BE
