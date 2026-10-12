@@ -173,13 +173,20 @@ const photoWidths = (w: number) => [480, 800, 1200].filter((x) => x < w).concat(
     background: radial-gradient(90% 75% at 50% 30%, #5c0a26 0%, #33040f 55%, #170207 100%);
   }
 
+  /* La foto entera, apoyada en la base (como los retratos de los pilotos).
+     Con fondo transparente se funde con el granate. */
   .principal :global(.photo),
   .staff :global(.photo),
   .bio :global(.photo) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 50% 15%;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: auto;
+    max-width: 100%;
+    height: 94%;
+    object-fit: contain;
+    object-position: 50% 100%;
+    transform: translateX(-50%);
   }
 
   .initials {
