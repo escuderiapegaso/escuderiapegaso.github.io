@@ -1,9 +1,9 @@
 ---
 name: Jordi Domènech
-role: Cap de disseny
+role: Vicepresident comercial
 group: management
 order: 3
 country: ES
-photo: ''
+photo: /src/assets/staff/jordi-portrait2.webp
 draft: false
 ---

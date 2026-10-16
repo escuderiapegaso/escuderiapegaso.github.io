@@ -1,9 +1,9 @@
 ---
 name: Jordi Domènech
-role: Deputy Team Manager
+role: Commercial Vice President
 group: management
 order: 3
 country: ES
-photo: ''
+photo: /src/assets/staff/jordi-portrait2.webp
 draft: false
 ---
