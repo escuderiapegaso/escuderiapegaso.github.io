@@ -1,5 +1,5 @@
 ---
-name: Jordi Domènech
+name: JordiMontané
 role: Commercial Vice President
 group: management
 order: 2
