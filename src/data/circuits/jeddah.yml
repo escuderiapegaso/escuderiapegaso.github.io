@@ -1,13 +1,13 @@
 city: Jeddah
-length: null
-laps: null
+length: 6.174
+laps: 50
 qualiRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:29.692
+  driver: Chloé de Saint-Germain Jr
+  team: Red Bull Racing Vaillante
   season: null
 raceRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:30.442
+  driver: Chloé de Saint-Germain Jr
+  team: Red Bull Racing Vaillante
   season: null
