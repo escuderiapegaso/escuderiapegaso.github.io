@@ -1,13 +1,13 @@
 city: Montréal
-length: null
-laps: null
+length: 4.361
+laps: 70
 qualiRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:15.795
+  driver: John Cannon
+  team: Red Bull Racing Vaillante
   season: null
 raceRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:15.729
+  driver: Aljaž Zupančič
+  team: Porsche Racing
   season: null
