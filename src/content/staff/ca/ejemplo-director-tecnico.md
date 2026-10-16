@@ -1,5 +1,5 @@
 ---
-name: Wim van den Steen
+name: Thisken
 role: Director del Programa de Desenvolupament de Pilots
 group: management
 order: 3

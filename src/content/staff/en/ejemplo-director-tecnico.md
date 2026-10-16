@@ -1,5 +1,5 @@
 ---
-name: Wim van den Steen
+name: Thisken
 role: Director of the Driver Development Programme
 group: management
 order: 3
