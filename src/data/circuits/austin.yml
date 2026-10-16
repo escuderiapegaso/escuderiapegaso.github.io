@@ -1,13 +1,13 @@
 city: Austin
-length: null
-laps: null
+length: 5.513
+laps: 56
 qualiRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:38.327
+  driver: Craig Gardner
+  team: Toyota Gazoo Racing
   season: null
 raceRecord:
-  time: ''
-  driver: ''
-  team: ''
-  season: null
+  time: 1:38.563
+  driver: Michael Damon Novikov
+  team: Team Penske
+  season: 37
