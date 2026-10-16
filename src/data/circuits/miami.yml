@@ -1,13 +1,13 @@
 city: Miami
-length: null
-laps: null
+length: 5.412
+laps: 57
 qualiRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:30.332
+  driver: Sabine Woeger
+  team: Scuderia Ferrari
   season: null
 raceRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:30.878
+  driver: Andrej Vidmar
+  team: McLaren F1 Team
   season: null
