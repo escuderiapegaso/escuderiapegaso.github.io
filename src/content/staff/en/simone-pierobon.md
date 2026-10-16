@@ -1,5 +1,5 @@
 ---
-name: Simone Pierobon
+name: simy88
 role: Member of the Management Board
 group: management
 order: 4

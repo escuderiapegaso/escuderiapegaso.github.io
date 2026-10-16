@@ -1,5 +1,5 @@
 ---
-name: Simone Pierobon
+name: simy88
 role: Miembro de la Junta Directiva
 group: management
 order: 4
