@@ -1,13 +1,13 @@
 city: Losail
-length: null
-laps: null
+length: 5.38
+laps: 57
 qualiRecord:
-  time: ''
-  driver: ''
-  team: ''
-  season: null
+  time: 1:34.264
+  driver: Howard Dewitt
+  team: Alpine F1 Team
+  season: 56
 raceRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:35.407
+  driver: Bernardo Reckziegel
+  team: Lotus Formula One Team
   season: null
