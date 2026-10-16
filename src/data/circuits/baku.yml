@@ -1,13 +1,13 @@
 city: Baku
-length: null
-laps: null
+length: 6.003
+laps: 51
 qualiRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:43.295
+  driver: Sabine Woeger
+  team: Scuderia Ferrari
   season: null
 raceRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:43.900
+  driver: Kamil Speedowski Jr.
+  team: Senna Racing F1
   season: null
