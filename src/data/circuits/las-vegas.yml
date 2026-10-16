@@ -1,13 +1,13 @@
 city: Las Vegas
-length: null
+length: 6.12
 laps: null
 qualiRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:27.993
+  driver: Philippe de Saint-Germain III
+  team: Red Bull Racing Vaillante
   season: null
 raceRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:28.483
+  driver: Gregory Moore
+  team: McLaren F1 Team
   season: null
