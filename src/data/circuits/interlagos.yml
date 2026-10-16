@@ -1,13 +1,13 @@
 city: São Paulo
-length: null
-laps: null
+length: 4.309
+laps: 71
 qualiRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:13.257
+  driver: Gracjan Wozipiwo
+  team: Red Bull Racing Vaillante
   season: null
 raceRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:13.490
+  driver: Sergey Osmolovskiy
+  team: Trabant F1 Racing Team
   season: null
