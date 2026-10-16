@@ -1,13 +1,13 @@
-city: Marina Bay
-length: null
+city: Singapore
+length: 4.928
 laps: 61
 qualiRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:13.248
+  driver: Michael Novikov
+  team: Scuderia Ferrari
   season: null
 raceRecord:
-  time: ''
-  driver: ''
-  team: ''
+  time: 1:13.664
+  driver: Sabine Woeger
+  team: Scuderia Ferrari
   season: null
