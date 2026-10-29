@@ -1,10 +1,12 @@
 ---
 title: Així és el Pegaso 268
-date: 2026-10-03
-category: car
+date: 2026-10-26
+category: sponsors
+tag: ''
 excerpt: Xassís Pegaso 268/3, unitat de potència Comet 007/1 i una nova livery en plata, granat i negre.
-image: /src/assets/news/pegaso-268-presentacion.jpg
+image: /src/assets/news/pioneerpegaso-mrc.webp
 imageAlt: Vista lateral del Pegaso 268 amb la livery de la temporada 68
+imagePosition: 50% 50%
 draft: false
 ---
 

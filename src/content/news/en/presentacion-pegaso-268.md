@@ -1,10 +1,12 @@
 ---
-title: Meet the Pegaso 268
-date: 2026-10-03
-category: car
+title: Pegaso announces major sponsorship deal with Pioneer Corporation
+date: 2026-10-26
+category: sponsors
+tag: ''
 excerpt: Pegaso 268/3 chassis, Comet 007/1 power unit and a new silver, maroon and black livery.
-image: /src/assets/news/pegaso-268-presentacion.jpg
+image: /src/assets/news/pioneerpegaso-mrc.webp
 imageAlt: Side view of the Pegaso 268 in its season 68 livery
+imagePosition: 50% 50%
 draft: false
 ---
 
