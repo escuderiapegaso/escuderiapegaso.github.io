@@ -1,9 +1,13 @@
 name: Gran Premio de Australia
 round: 1
 qualifying:
-  weather: null
+  weather:
+    type: mostly-sunny
+    chance: 0
   results: []
 race:
-  weather: null
+  weather:
+    type: mostly-sunny
+    chance: 0
   fastestLap: ''
   results: []
