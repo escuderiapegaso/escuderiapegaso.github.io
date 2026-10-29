@@ -1,11 +1,13 @@
 name: Gran Premio de Baréin
 round: 4
-
 qualifying:
   weather:
+    type: sunny
+    chance: 0
   results: []
-
 race:
   weather:
-  fastestLap:
+    type: mostly-sunny
+    chance: 1
+  fastestLap: null
   results: []
