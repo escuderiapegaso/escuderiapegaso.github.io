@@ -120,3 +120,123 @@ drivers:
     number: null
     team: spyker
     helmet: /src/assets/helmets/mcgee-helmet.webp
+  - id: andrej-vidmar
+    name: Andrej Vidmar
+    country: SI
+    number: null
+    team: porsche
+    helmet: /src/assets/helmets/vidmar-helmet.webp
+  - id: mitja-prevodnik
+    name: Mitja Prevodnik
+    country: SI
+    number: null
+    team: porsche
+    helmet: /src/assets/helmets/vidmar-helmet.webp
+  - id: robert-kubica-iv
+    name: Robert Kubica IV
+    country: PL
+    number: null
+    team: senna
+    helmet: /src/assets/helmets/kubica-helmet.webp
+  - id: katarzyna-piorecka
+    name: Katarzyna Piórecka
+    country: PL
+    number: null
+    team: senna
+    helmet: /src/assets/helmets/piorecka-helmet.webp
+  - id: miguel-llorens
+    name: Miguel Llorens
+    country: ES
+    number: null
+    team: b15
+    helmet: /src/assets/helmets/llorens-helmet.webp
+  - id: carlos-luque
+    name: Carlos Luque
+    country: ES
+    number: null
+    team: b15
+    helmet: /src/assets/helmets/luque-helmet.webp
+  - id: aleksey-romadov
+    name: Aleksey Romadov
+    country: RU
+    number: null
+    team: toyota
+    helmet: /src/assets/helmets/romadov-helmet.webp
+  - id: bernardo-reckziegel
+    name: Bernardo Reckziegel
+    country: BR
+    number: null
+    team: toyota
+    helmet: /src/assets/helmets/bernardoreckziegel-helmet.webp
+  - id: antonio-mateus
+    name: António Mateus
+    country: PT
+    number: null
+    team: aston-martin
+    helmet: /src/assets/helmets/mateus-helmet.webp
+  - id: fabricio-ze-cruz
+    name: Fabrício Zé Cruz
+    country: PT
+    number: null
+    team: aston-martin
+    helmet: /src/assets/helmets/cruz-helmet.webp
+  - id: ryszard-ochodzki
+    name: Ryszard Ochódzki
+    country: PL
+    number: null
+    team: ford
+    helmet: /src/assets/helmets/ochodzki-helmet.webp
+  - id: loki-asen
+    name: Loki Asen
+    country: DE
+    number: null
+    team: ford
+    helmet: /src/assets/helmets/asen-helmet.webp
+  - id: jan-pawlowski
+    name: Jan Pawłowski
+    country: PL
+    number: null
+    team: alpine
+    helmet: /src/assets/helmets/pawlowski-helmet.webp
+  - id: james-berg
+    name: James Berg
+    country: CA
+    number: null
+    team: alpine
+    helmet: /src/assets/helmets/berg-helmet.webp
+  - id: zdenek-vojtech
+    name: Zdeněk Vojtěch
+    country: CZ
+    number: null
+    team: jordan
+    helmet: /src/assets/helmets/vojtech-helmet.webp
+  - id: majo-michalovic
+    name: Majo Michalovič
+    country: SK
+    number: null
+    team: jordan
+    helmet: /src/assets/helmets/michalovic-helmet.webp
+  - id: clecio-osvaldo-pinto
+    name: Clecio Osvaldo Pinto
+    country: BR
+    number: null
+    team: lotus
+    helmet: /src/assets/helmets/bernardoreckziegel-helmet.webp
+  - id: joao-carlos-eduardo
+    name: João Carlos Eduardo
+    country: BR
+    number: null
+    team: lotus
+    helmet: /src/assets/helmets/eduardo-helmet.webp
+  - id: andrea-croquentio
+    name: Andrea Croquentio
+    country: IT
+    number: null
+    team: ferrari
+    helmet: /src/assets/helmets/croquentio-helmet.webp
+  - id: gianluca-gonza
+    name: Gianluca Gonza
+    country: IT
+    number: null
+    team: ferrari
+    helmet: /src/assets/helmets/ggonza-helmet.webp
