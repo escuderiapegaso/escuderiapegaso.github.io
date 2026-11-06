@@ -4,7 +4,9 @@ qualifying:
   weather:
     type: sunny
     chance: 0
-  results: []
+  results:
+    - driver: philippe-saintgermain-iii
+      time: 1:32.960
 race:
   weather:
     type: mostly-sunny
