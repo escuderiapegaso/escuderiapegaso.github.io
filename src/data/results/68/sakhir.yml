@@ -7,6 +7,64 @@ qualifying:
   results:
     - driver: philippe-saintgermain-iii
       time: 1:32.960
+    - driver: andrej-vidmar
+      time: 1:32.963
+    - driver: robert-kubica-iv
+      time: 1:33.075
+    - driver: katarzyna-piorecka
+      time: 1:33.080
+    - driver: john-cannon
+      time: 1:33.082
+    - driver: madalynn-clara
+      time: 1:33.104
+    - driver: jose-reckziegel
+      time: 1:33.130
+    - driver: mitja-prevodnik
+      time: 1:33.159
+    - driver: nacer-gonza
+      time: 1:33.194
+    - driver: remco-raveel
+      time: 1:33.278
+    - driver: juan-barnard
+      time: 1:33.326
+    - driver: brendan-mcgee
+      time: 1:33.339
+    - driver: fabricio-ze-cruz
+      time: 1:33.426
+    - driver: antonio-mateus
+      time: 1:33.485
+    - driver: loki-asen
+      time: 1:33.717
+    - driver: ryszard-ochodzki
+      time: 1:33.780
+    - driver: jan-pawlowski
+      time: 1:34.085
+    - driver: james-berg
+      time: 1:34.154
+    - driver: carlos-luque
+      time: 1:34.498
+    - driver: miguel-llorens
+      time: 1:34.579
+    - driver: aljaz-zupancic
+      time: 1:34.916
+    - driver: clecio-osvaldo-pinto
+      time: 1:34.968
+    - driver: aleksey-romadov
+      time: 1:34.978
+    - driver: bernardo-reckziegel
+      time: 1:35.131
+    - driver: joao-carlos-eduardo
+      time: 1:35.367
+    - driver: gregory-moore
+      time: 1:35.626
+    - driver: gianluca-gonza
+      time: 1:35.771
+    - driver: majo-michalovic
+      time: 1:36.117
+    - driver: zdenek-vojtech
+      time: 1:36.702
+    - driver: andrea-croquentio
+      time: 1:36.826
 race:
   weather:
     type: mostly-sunny
