@@ -70,4 +70,124 @@ race:
     type: mostly-sunny
     chance: 1
   fastestLap: null
-  results: []
+  results:
+    - driver: andrej-vidmar
+      laps: 57
+      time: 1:33:19.222
+      dnf: false
+    - driver: robert-kubica-iv
+      laps: 57
+      time: 1:33:26.665
+      dnf: false
+    - driver: mitja-prevodnik
+      laps: 57
+      time: 1:33:28.279
+      dnf: false
+    - driver: remco-raveel
+      laps: 57
+      time: 1:33:28.790
+      dnf: false
+    - driver: juan-barnard
+      laps: 57
+      time: 1:33:30.842
+      dnf: false
+    - driver: john-cannon
+      laps: 57
+      time: 1:33:31.143
+      dnf: false
+    - driver: philippe-saintgermain-iii
+      laps: 57
+      time: 1:33:31.904
+      dnf: false
+    - driver: nacer-gonza
+      laps: 57
+      time: 1:33:33.750
+      dnf: false
+    - driver: madalynn-clara
+      laps: 57
+      time: 1:33:37.407
+      dnf: false
+    - driver: katarzyna-piorecka
+      laps: 57
+      time: 1:33:39.944
+      dnf: false
+    - driver: brendan-mcgee
+      laps: 57
+      time: 1:33:40.396
+      dnf: false
+    - driver: jose-reckziegel
+      laps: 57
+      time: 1:33:44.605
+      dnf: false
+    - driver: fabricio-ze-cruz
+      laps: 57
+      time: 1:34:00.345
+      dnf: false
+    - driver: carlos-luque
+      laps: 57
+      time: 1:34:04.960
+      dnf: false
+    - driver: ryszard-ochodzki
+      laps: 57
+      time: 1:34:05.198
+      dnf: false
+    - driver: loki-asen
+      laps: 57
+      time: 1:34:05.957
+      dnf: false
+    - driver: miguel-llorens
+      laps: 57
+      time: 1:34:26.587
+      dnf: false
+    - driver: aljaz-zupancic
+      laps: 56
+      time: ''
+      dnf: false
+    - driver: clecio-osvaldo-pinto
+      laps: 56
+      time: ''
+      dnf: false
+    - driver: aleksey-romadov
+      laps: 56
+      time: ''
+      dnf: false
+    - driver: joao-carlos-eduardo
+      laps: 56
+      time: ''
+      dnf: false
+    - driver: jan-pawlowski
+      laps: 56
+      time: ''
+      dnf: false
+    - driver: gregory-moore
+      laps: 56
+      time: ''
+      dnf: false
+    - driver: andrea-croquentio
+      laps: 56
+      time: ''
+      dnf: false
+    - driver: zdenek-vojtech
+      laps: 55
+      time: ''
+      dnf: false
+    - driver: gianluca-gonza
+      laps: 55
+      time: ''
+      dnf: false
+    - driver: bernardo-reckziegel
+      laps: 17
+      time: ''
+      dnf: true
+    - driver: majo-michalovic
+      laps: 14
+      time: ''
+      dnf: true
+    - driver: james-berg
+      laps: 6
+      time: ''
+      dnf: true
+    - driver: antonio-mateus
+      laps: 5
+      time: ''
+      dnf: true
